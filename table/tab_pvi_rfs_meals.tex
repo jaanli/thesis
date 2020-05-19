@@ -1,0 +1,19 @@
+% !TEX root = altosaar-2020-thesis.tex
+\begin{table}[tb]
+\centering
+\begin{tabular}{lS}
+\toprule
+Model & \multicolumn{1}{c}{Sampled Recall (\%)}
+\\
+\midrule
+% /scratch/gpfs/altosaar/log/food_rec/2018-07-14/include_item_counts=False_grid/model=EmbeddingDotProd
+\gls{rfs} &  58 \\
+% /scratch/gpfs/altosaar/log/food_rec/2020-04-07/loseit-pvi-rfs/proximity_constraint=True_init_magnitude_scale=10.0_proximity_decay_steps=100000_decay_rate=1e-05
+\gls{rfs}, Entropy Constraint &\bfseries 62 \\
+
+\bottomrule
+\end{tabular}
+% \vspace{1ex}
+\caption[\textsc{pvi} results for \textsc{rfs} applied to meal recommendation]{\textbf{\Acrlong{PVI} with the entropy proximity statistic improves top-1 recall on a meal recommendation task.}}
+\label{tab:pvi-rfs-meals}
+\end{table}

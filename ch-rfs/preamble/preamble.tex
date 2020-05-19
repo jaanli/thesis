@@ -1,0 +1,205 @@
+% !TEX root = ../rankfromsets.tex
+% FONTS
+\usepackage[T1]{fontenc}
+
+% \usepackage[T1]{fontenc} % To switch to the T1 encoding
+% \usepackage{lmodern} % To switch to Latin Modern
+% \rmfamily % To load Latin Modern Roman and enable the following NFSS declarations.
+% % Declare that Latin Modern Roman (lmr) should take
+% % its bold (b) and bold extended (bx) weight, and small capital (sc) shape,
+% % from the corresponding Computer Modern Roman (cmr) font, for the T1 font encoding.
+% \DeclareFontShape{T1}{lmr}{b}{sc}{<->ssub*cmr/bx/sc}{}
+% \DeclareFontShape{T1}{lmr}{bx}{sc}{<->ssub*cmr/bx/sc}{}
+% \DeclareFontShape{OT1}{cmr}{bx}{sc}{<-> cmbcsc10}{}
+
+\usepackage{amsmath}
+
+
+% Replace default Latin Modern typewriter with its proportional counterpart
+% http://www.tug.dk/FontCatalogue/lmoderntypewriterprop/
+%\renewcommand*\ttdefault{lmvtt}
+
+%%% OPTION 3 - MTPRO 2 Math + Termes Times + ParaType Sans
+\let\myBbbk\Bbbk
+\let\Bbbk\relax
+\usepackage{tgtermes}
+\usepackage[subscriptcorrection,
+            amssymbols,
+            mtpbb,
+            mtpcal,
+            zswash,
+            nofontinfo  % suppresses all warnings
+           ]{mtpro2}
+\usepackage{scalefnt,letltxmacro}
+\LetLtxMacro{\oldtextsc}{\textsc}
+\renewcommand{\textsc}[1]{\oldtextsc{\scalefont{1.10}#1}}
+\usepackage[scaled=0.92]{PTSans}
+
+% for bold textsc
+% \usepackage{slantsc}
+% \usepackage{bold-extra}
+
+% ICONS
+% \usepackage{dingbat}
+\usepackage{fontawesome}
+
+% CODE
+% \usepackage{minted}
+\usepackage{listings}
+
+% separate file for appendix
+\usepackage{subfiles}
+
+% COLOR
+\usepackage[usenames,dvipsnames]{xcolor}
+\definecolor{shadecolor}{gray}{0.9}
+
+% SPACING and TEXT
+% \usepackage[final,expansion=alltext]{microtype}
+\usepackage[english]{babel}
+\usepackage[parfill]{parskip}
+\usepackage{afterpage}
+\usepackage{framed}
+\usepackage{nicefrac}
+
+% EDITING
+% line numbering in left margin
+\usepackage{lineno}
+\renewcommand\linenumberfont{\normalfont
+                             \footnotesize
+                             \sffamily
+                             \color{SkyBlue}}
+% ragged paragraphs in right margin
+\usepackage{ragged2e}
+\DeclareRobustCommand{\sidenote}[1]{\marginpar{
+                                    \RaggedRight
+                                    \textcolor{Plum}{\textsf{#1}}}}
+
+% Define a paragraph header function
+\DeclareRobustCommand{\parhead}[1]{\textbf{#1}~}
+
+% paragraph helper
+\DeclareRobustCommand{\PP}{\textcolor{Plum}{\P}~}
+\DeclareRobustCommand{\pp}{\textcolor{Plum}{\P}~}
+
+% COUNTERS
+\renewcommand{\labelenumi}{\color{black!67}{\arabic{enumi}.}}
+\renewcommand{\labelenumii}{{\color{black!67}(\alph{enumii})}}
+\renewcommand{\labelitemi}{{\color{black!67}\textbullet}}
+
+% FIGURES
+\usepackage{graphicx}
+\usepackage[labelfont=bf]{caption}
+\usepackage[format=hang]{subcaption}
+\usepackage{wrapfig}
+
+% TABLES
+\usepackage{booktabs}
+\usepackage{array}
+
+%\usepackage{dblfloatfix}  % for placing table at bottom of page
+
+% TABLE ALIGNMENT
+\usepackage{etoolbox,siunitx}
+\robustify\bfseries
+\sisetup{detect-weight=true, detect-shape=true, detect-mode=true,
+table-format=5.1,
+table-number-alignment=center,
+separate-uncertainty=true,
+input-ignore={,},input-decimal-markers={.}}
+
+% BABEL
+% \usepackage{polyglossia}
+
+% BIBLIOGRAPHY
+% \usepackage{natbib}
+% \renewcommand{\bibnumfmt}[1]{\small[#1]}
+% % citenumfont command adds S to all numbers
+% \renewcommand{\citenumfont}[1]{\small#1}
+
+% ALGORITHMS
+\usepackage[algoruled]{algorithm2e}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+% THEOREMS
+\usepackage{amsthm}
+\newtheorem{theorem}{theorem}
+\newtheorem{prop}{proposition}
+\addto\captionsenglish{\renewcommand*\proofname{proof}}  % needed for babel renaming proof
+
+
+% TODO -- causes bbbk and amssymb error!
+% \usepackage{todo}
+
+% HYPERREF
+\usepackage[colorlinks,linktoc=all]{hyperref}
+\usepackage[all]{hypcap}
+\hypersetup{citecolor=Violet}
+\hypersetup{linkcolor=black}
+\hypersetup{urlcolor=MidnightBlue}
+
+% CLEVEREF must come after HYPERREF
+\usepackage[capitalize,nameinlink]{cleveref}
+\Crefname{prop}{Proposition}{Propositions}
+
+% save space for neurips format
+% \crefname{section}{\S}{\S\S}
+% \Crefname{section}{\S}{\S\S}
+% \Crefname{appendix}{\S}{\S\S}
+% \Crefname{equation}{Eq.}{Eqs.}
+% \Crefname{figure}{Fig.}{Figs.}
+% \Crefname{prop}{Prop.}{Props.}
+% \Crefname{table}{Tab.}{Tabs.}
+% \LetLtxMacro{\oldCref}{\Cref}
+% \renewcommand{\Cref}[1]{\scalefont{0.5}{\oldCref{#1}}}
+
+% save space by making references to labels smaller in size
+% \newcommand{\reffont}{\small}% References will be \small
+% \AtBeginDocument{%
+%   \LetLtxMacro\oldCref\Cref% Capture \ref in \oldref
+%   \renewcommand{\Cref}[1]{% Update \ref to use...
+%   {\reffont\oldCref{#1}}}% ...\reffont
+% }
+
+% ACRONYMS
+% smallcaps option
+\usepackage[acronym,nowarn]{glossaries}
+\glsdisablehyper
+% \makeglossaries
+
+% COLOR DEFINITIONS
+\newcommand{\red}[1]{\textcolor{BrickRed}{#1}}
+\newcommand{\orange}[1]{\textcolor{BurntOrange}{#1}}
+\newcommand{\green}[1]{\textcolor{OliveGreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{MidnightBlue}{#1}}
+\newcommand{\gray}[1]{\textcolor{black!60}{#1}}
+
+% LISTINGS DEFINTIONS
+\usepackage{listings}
+\lstdefinestyle{alp_style}{
+    commentstyle=\color{OliveGreen},
+    numberstyle=\tiny\color{black!60},
+    stringstyle=\color{BrickRed},
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=none,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=alp_style}
+
+% spacing
+\usepackage{titlesec}
+\titlespacing*{\section}
+{0pt}{1ex plus 1ex minus .2ex}{1ex plus .2ex}
+\titlespacing*{\subsection}
+{0pt}{1ex plus 1ex minus .2ex}{1ex plus .2ex}
+\linepenalty=1000

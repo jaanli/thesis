@@ -1,0 +1,16 @@
+% !TEX root = ../main.tex
+\begin{table}[tb]
+\centering
+\begin{tabular}{lSS}
+\toprule
+Inference Method & \multicolumn{1}{c}{\gls{ELBO}} & \multicolumn{1}{c}{Likelihood}
+\\
+\midrule
+Variational Inference & -101.0 & -94.2 \\
+\gls{PVI}, Orthogonal Constraint &\bfseries -100.4 &\bfseries -93.9 \\
+\bottomrule
+\end{tabular}
+\vspace{1ex}
+\caption[\textsc{pvi} results for a deep latent Gaussian model]{\textbf{\Acrlong{PVI} with an orthogonal proximity statistic makes optimization easier in a variational autoencoder model~\citep{kingma2014autoencoding,rezende2014stochastic}.} We report the held-out \glsreset{ELBO}\gls{ELBO} and estimates of the marginal likelihood on the binarized MNIST~\citep{pmlr-v15-larochelle11a} test set.}
+\label{table:dlgm2}
+\end{table}

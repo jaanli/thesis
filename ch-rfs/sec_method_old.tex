@@ -1,0 +1,399 @@
+\acrshort{rankfromsets} is a classifier whose output is used to rank items for a
+user $u$ based on each item's set of attributes $x_m \in I$ and learned user
+embeddings $\theta_u$. Every item $x_m \in I$ is represented by a subset of
+attributes $v \in V$ from a vocabulary of attributes $V$. Item $m$ is
+represented by the set of attributes $x_m \subseteq V$.
+
+The \acrshort{rankfromsets} model is a classifier parameterized by a neural
+network $f$ that predicts whether user $u$ consumed item $m$, demarcated by the
+binary indicator $\yum = 1$. The model is trained to discriminate items a user
+consumed, $(x_m, \yum=1)$, from items a user is unlikely to consume,
+$(x_k, \yuk=0)$. In implicit feedback data, only the former datapoints
+$(x_m, \yum = 1)$ are observed. (We describe how to define negative samples
+$(x_k, \yuk=0)$ later.)
+
+The classifier outputs the probability of a user $u$ consuming an item $m$:
+\begin{align}
+p(\yum = 1 \mid x_m) = \sigma\left(f\left(\theta_u, \sum_{v\in x_m}
+  \beta_v,~~h(x_m)\right)\right).
+\label{eq:rankfromsets}
+\end{align}
+The learned user embedding $\theta_u$, item attribute embeddings $\beta_v$, and
+item intercept function $h(x_m)$ are used to make the prediction of item
+consumption. The item intercept function maps items to
+intercepts based on the item attributes (we describe how to construct this
+function later). The sigmoid function is denoted $\sigma$ and squashes the
+output of the neural network to be between $0$ and $1$, yielding the probability
+that user $u$ consumes item $m$.
+
+Fitting the model amounts to learning the user embeddings, the item attribute
+embeddings, parameters of the item intercept function, and any parameters of the
+neural network $f$ such as weights and biases. We define the loss function in
+\Cref{sec:fitting}.
+
+Does \acrshort{rankfromsets} satisfy the modeling criteria laid out in
+\Cref{sec:desiderata}? The model is order-invariant: the summation of the item
+attribute embeddings $\beta_v$ and the construction of the item intercept
+function (detailed below) guarantees that the model output is invariant to the
+order of set elements. Second, the model provably improves recall, as described
+in \Cref{sec:theory}. Third, the choice of neural network $f$ to parameterize
+the model enables universal approximation of other order-invariant models.
+Finally, the model satisfies parameter-sharing, as the item attribute embeddings
+$\beta_v$ and the intercept function $h$ are shared across items and allow the
+model to scale.
+
+\paragraph{Theoretical results.} \acrshort{rankfromsets} is supported by
+propositions in \Cref{sec:theory}. We derive a result related to the
+recommendation performance of the model. A common evaluation metric for
+recommendation models is recall. Recall can be viewed as a binary task, and we
+prove that this immediately leads to the conclusion that a classifier such as
+\acrshort{rankfromsets} can maximize this metric. The second result concerns
+universal approximation. The structure of the neural network used to
+parameterize \acrshort{rankfromsets} enables it to approximate other models such
+as matrix factorization or permutation-marginalized recurrent neural networks.
+
+\subsection{Cold start and collaborative filtering}
+
+The cold start problem arises when new items or new users appear.
+Recommendations of such items or for such users are only possible if there
+exists metadata about items (such as sets of attributes) or metadata about users
+(such as age). As \acrshort{rankfromsets} recommends items based on their
+attributes, we focus on the cold start setting of new items, where there is item
+metadata available.
+
+\paragraph{\acrshort{rankfromsets} item attribute embeddings leaven the cold
+  start problem.} If an item has not been consumed by any user, it is considered
+a `cold start` item, as the recommendation model does not have any historical
+information with which to rank the item. The model must use the item attributes
+to inform the rankings of such cold start items. \acrshort{rankfromsets}
+addresses the cold-start problem by leveraging item attribute embeddings, which
+allow the ranking of new items through their sets of attributes. Consider the
+recommendation of cold start items that contain common attributes, such as meals
+with commmon foods (e.g. bananas, tomatoes, bread), or arXiv papers that use
+standard terms (e.g. recommendation, deep, learning). Item attribute embeddings
+for such attributes that are shared across items enable information to be shared
+between items with zero consumption data and items that have been consumed and
+have similar attributes.
+
+As our focus is on the setting where users have a history of previously-consumed
+items, we need to ensure that \acrshort{rankfromsets} supports collaborative
+filtering. In other words, the model needs to make recommendations for a user by
+filtering items based on the consumption patterns of other users.
+
+\paragraph{Collaborative filtering via item intercepts.}
+\acrshort{rankfromsets} shares information across users through the item
+intercept function $h$. The item intercept function enables the ranking of items
+for a user based on similar users' patterns of consumption. The item intercept
+function is shared across users, allowing one user's consumption choices to
+inform another's ranking. This is in contrast to the item attribute embeddings,
+which depend on the attributes of every item (these content-based attributes
+cannot capture patterns in usage independent of content). The parameterization
+of the item intercept function $h$ depends on the size of the data. If the data
+is small enough, $h$ can function as a lookup for unique intercepts for every
+item. However, if the number of items is so large that unique item intercepts
+lead to overfitting, we can define $h$ using additional information about every
+item. For example, if the data consists of foods in meals, we can define a meal
+intercept as the sum of food intercepts, yielding a scalable item intercept
+function. These two choices of parameterization satisfy the desideratum of
+order-invariance. The input to the item intercept function is a set of
+attributes, so the above constructions (using item-level parameters or sums)
+ensure every item intercept is independent of the order of the item's set of
+attributes.
+
+\subsection{Neural network architectures}
+\label{sec:parameterizations}
+There are several choices for parameterizing the neural network $f$ in the
+\acrshort{rankfromsets} recommendation model. The following choices of neural
+network architectures enable universal approximation of other order-invariant
+models; we outline the technical requirements for this in \Cref{sec:theory}. In
+these parameterizations, the neural network $f$ outputs logits that predict item
+consumption; these are used to train the classifier. For recommendation, items
+are ranked using the logits.
+
+In the inner product parameterization, the classifier makes predictions using
+the dot product of the user embedding $\theta_u$ and the sum of the item
+attribute embedding sand item intercept function.  This architecture is equivalent to
+a neural network with user-dependent weights $\theta_u$. The neural network
+outputs logits that predict whether user $u$ consumed item $m$:
+\begin{align}
+  f\left(\theta_u, x_m\right) = \theta_u^\top\left(\sum_{v\in x_{m}}
+  \beta_v + h(x_m)\right)
+  \label{eq:inner-product}
+\end{align}
+
+As an alternative parameterization, $f$ can be a deep neural network:
+\begin{align}
+  f(\theta_u, x_m) = \phi\left(\theta_u, \sum_{v\in x_m}
+  \beta_v, h(x_m)\right),
+  \label{eq:neural-network}
+\end{align}
+where the deep network $\phi$ has weights and biases and takes as inputs the
+user embedding, sum of item attribute embeddings, and item intercept. This
+architecture contrasts the inner product parameterization: ex ante, it is
+unclear whether a finite-depth, finite-size neural network can learn the inner
+product function.
+
+A third parameterization is a combination of the above, using an idea borrowed
+from residual networks~\citep{DBLP:journals/corr/HeZRS15}. A neural network can
+be used to learn the residual in the inner product model:
+\begin{align}
+  f\left(\theta_u, x_m\right) = \theta_u^\top\left(\sum_{v\in x_m}
+  \beta_v + h(x_m)\right) + \phi(\theta_u, x_m).
+  \label{eq:residual}
+\end{align}
+
+We discuss the generalization and universal approximation capabilities of these
+parameterizations in the following section.
+
+\subsection{Fitting the model}
+\label{sec:fitting}
+\acrshort{rankfromsets} is fit to data using a classification objective function
+and a stochastic optimization algorithm.
+
+The model can be represented using a Bernoulli distribution, with generative
+process $\yum~\sim~\textrm{Bernoulli}\left(\yum; \sigma(f(u, x_m))\right)$. The
+probability of a user consuming an item is given by \Cref{eq:rankfromsets}.
+
+As \acrshort{rankfromsets} is a classifier, it requires both positively- and
+negatively-labeled training data. But in implicit feedback data, there are no
+negative labels. Users explicitly consume items $(x_m, \yum = 1)$, but do not
+indicate dislike of items $(x_m, \yuk = 0)$. For training the
+\acrshort{rankfromsets} classifier, we assign negative labels to items a user is
+unlikely to consume. These items are called negative samples. Negative samples
+are drawn uniformly at random from the collection of items $I$. (We justify this
+choice of negative sampling distribution in the next section.)
+
+Denote the parameters of the model by $\theta$, and let $K$ be the number of
+negative samples. The model parameters are the user embeddings, item attribute
+embeddings, parameters of the item intercept function, and any weights and
+biases of the neural network in \Cref{eq:rankfromsets}. The maximum likelihood
+objective function for a single datapoint $(x_m, \yum=1)$ is
+\begin{align}
+\begin{split}
+  \cL(\theta, & (x_m, \yum), \{(x_k, \yuk)\}) =\\
+  &\log p(\yum = 1 \mid x_m; \theta) + \sum_{k=1}^K \log p(\yuk = 0 \mid x_k;
+  \theta),\\
+  &\textrm{with}~x_k\sim\textrm{Uniform}(I).
+  \label{eq:objective}
+\end{split}
+\end{align}
+
+% \begin{align}
+%   \cL_{\textrm{total}}\left(\theta, \{(x_m,
+%         \yum)\}\right) = & \sum_u \sum_{m: \yum = 1}\cL(\theta, (x_m, \yum))
+% \end{align}
+%\input{algo_rankfromsets}
+
+\paragraph{Optimization.} We use stochastic gradient ascent~\citep{Robbins:1951}
+to maximize the objective. This algorithm subsamples datapoints
+$(x_m, \yum = 1)$, and optimizes the objective with respect to the model
+parameters by taking stochastic gradient steps in the parameter space. We use
+minibatches of datapoints to improve convergence.
+
+\section{theory}
+\label{sec:theory}
+
+Having exhibited several parameterizations of the \acrshort{rankfromsets}
+recommendation model, we prove that these parameterizations satisfy the
+desideratum of improved recall in \Cref{sec:desiderata}. By noting that recall
+is a binary task, it follows that a classifier such as \acrshort{rankfromsets}
+can maximize this metric (\Cref{prop:1}). We also prove that
+\acrshort{rankfromsets} can approximate any order-invariant recommendation model
+such as matrix factorization (\Cref{prop:2}).
+
+Recall measures how accurately a recommendation model ranks items consumed by a
+user. It is computed as follows. First, for a specific user $u$, use the model
+to rank all items $x_m \in I$. Denote the top $M$ items returned by the model as
+${x_1, x_2, \ldots, x_M}$. Recall is defined as the fraction of items the user
+$u$ consumed in these top-ranked items:
+\begin{align}
+  \textrm{Recall@}M &= \frac{\lvert \{x_m : \yum = 1 \} \rvert }{M}
+\label{eq:recall}
+\end{align}
+
+\subsection{Classifiers maximize recall}
+\label{sec:optimal}
+
+The central insight here is that recall can be viewed as classification: a
+recommendation model does or does not recall an item consumed by a user. This
+connection between the performance of a recommender and its parameterization as
+a classifier forms the scaffolding for \acrshort{rankfromsets}.
+
+Datapoints in a classifier are of the form $(x, y) \sim F$ where $F$ is the
+empirical data-generating distribution. The generalization error of a binary
+classifier $p(y \mid x)$ is the misclassification rate,
+\begin{equation}
+E = \sum_{x \in F} \left[ \hat y(x) \neq y \right] \, .
+\end{equation}
+\begin{proposition}
+  A binary classifier is trained with positive examples from a user's history
+  and negative samples drawn uniformly from the collection of items $I$. If such
+  a classifier achieves zero generalization error, then it achieves maximum
+  recall.
+  \label{prop:1}
+\end{proposition}
+\begin{proof}
+  A model with zero generalization error is a perfect classifier; it assigns
+  greater probability to positively-labeled datapoints than to
+  negatively-labeled datapoints. In other words, it ranks positive examples
+  above negative examples. Recall is measured by the fraction of
+  positively-labeled items in a ranking returned by the model. In a classifier
+  that achieves zero generalization error, positively-labeled datapoints muts be
+  ranked higher than other datapoints, maximizing recall.
+  %Recall is maximized up to negative samples being
+%  identical to positive examples (such examples will have the same rank).
+\end{proof}
+
+\Cref{prop:1} connects recommender systems to classification. This connection may
+seem vacuous or tautological. But the message is subtle---in terms of recall, a
+good classifier makes for a good recommender.
+
+This theory also justifies the choice of negative samples for implicit feedback
+data in the objective, \Cref{eq:objective}. For good recall performance, it is
+sufficient to assign negative labels uniformly over the items $I$. Note that the
+distribution of negative samples can be other than uniform, as long as every
+item in the collection is assigned positive weight. In the infinite data limit,
+any such distribution of negative samples will result in a classifier with
+maximum recall.
+
+\subsection{\acrshort{rankfromsets} can approximate any order-invariant model}
+
+Having shown that a classifier such as \acrshort{rankfromsets} can yield good
+performance as a recommendation model in terms of recall, we turn to the model's
+flexibility. The desideratum of order-invariance for models that rank from sets
+in \Cref{sec:desiderata} leads to a specific class of models. We show that
+\acrshort{rankfromsets} can approximate any model in this class.
+
+The criterion of order-invariance in \Cref{sec:desiderata} requires that a
+recommendation model that takes as input a set of attributes be invariant to the
+order the set elements are fed to the model. We formally define this class of
+recommendation models as order-invariant models, and show that
+\acrshort{rankfromsets} can approximate any model in this class.
+
+\paragraph{Order-invariant models.} A set is unordered, and therefore invariant
+to permutation. Recommendation models that rank items from their sets of
+attributes must be invariant to the order that set elements are fed to the
+model. For a model $f$ that is used to rank item $m$ for user $u$, order
+invariance with respect to the attributes $v_i \in x_m$ is written
+\begin{align}
+  f(u, {v_1, v_2, v_L}) &= f(u, {v_{\pi(1)}, v_{\pi(2)}, \ldots
+                                     v_{\pi(L)}})~\forall~\pi,
+\label{eq:order-invariance}
+\end{align}
+where $\pi$ is a permutation of the indices of individual attributes.
+
+We can verify that a recommendation model is in the class of order-invariant
+models by checking that it satisfies \Cref{eq:order-invariance}. Examples of
+order-invariant models are matrix factorization, recommendation models based on
+word embeddings, and permutation-marginalized recurrent neural networks.
+We show that a Bayesian matrix factorization model \citep{Gopalana} is
+order-invariant in \Cref{sec:order-invariance}. These models are evaluated in
+\Cref{sec:rfs-experiments}.
+
+The class of order-invariant models is large. The next proposition allows us to
+focus on comparing architectures for a single model rather than comparing
+models. This simplifies design of recommendation models evaluated using recall.
+\acrshort{rankfromsets} is parameterized by neural networks, and \Cref{prop:2}
+says that the model can approximate any other model in the class of
+order-invariant models. This result is derived from the framing of the
+parameterizations of \acrshort{rankfromsets} in \Cref{sec:parameterizations} as
+neural networks with learned item-dependent covariates and user-dependent
+weights, and use of the fact that neural networks are universal approximators.
+
+\begin{proposition}
+  Assume the vocabulary of attributes (set elements) is countable,
+  $\lvert V \rvert < \lvert \bbN_0 \rvert$. \acrshort{rankfromsets}, with
+  parameters on the order of the size of the vocabulary can approximate any
+  order-invariant recommendation model.
+  \label{prop:2}
+\end{proposition}
+The proof follows directly from Theorem~2 in
+\citet{DBLP:journals/corr/ZaheerKRPSS17} and we will not restate it here. (The
+only change to the proof is the mapping from set elements to one-hot vectors,
+$c \colon V \to \left\{0, 1\right\}^{\lvert V \rvert}$ to yield a unique
+representation of every member of the powerset.)
+
+\Cref{prop:2} supports using \acrshort{rankfromsets} in practice: not only does
+the model improve recall (\Cref{prop:1}), but it can also approximate other
+models, including matrix factorization. Matrix factorization and other
+order-invariant models may not have theoretical guarantees of improved
+evaluation metrics or universal approximation. Focusing on building efficient
+architectures to parameterize \acrshort{rankfromsets} rather than designing
+extensions of models may simplify the design of recommenders.
+
+\subsection{Comparing parameterizations of \acrshort{rankfromsets} using
+  generalization}
+\label{sec:generalization}
+
+Is there an optimal architecture for \acrshort{rankfromsets} between the inner
+product, \Cref{eq:inner-product}, or residual parameterization in
+\Cref{eq:residual}? It depends. In the regime of infinite data and infinite
+parameters, the inner product and residual architectures are equivalent:
+\Cref{prop:2} states that given infinite data, both are universal approximators.
+In theory, they can approximate any order-invariant model such as matrix
+factorization. But in the finite data, finite parameter regime, there are
+tradeoffs that may favor one architecture over another. Depending on assumptions
+about the data-generating distribution and parameter-sharing choices, one
+architecture may be more efficient than another.
+
+With finite data and finite paramaters, the optimal parameterization of
+\acrshort{rankfromsets} is dependent on the data-generating distribution. Recall
+that observations of user-item interactions are generated by
+$ \yum~\sim~\textrm{Bernoulli}\left(\yum; \sigma(f(u, x_m)\right)$, where $f$ is
+a function that outputs logits. We describe how different assumptions about the
+logit function $f$ lead to the residual architecture or inner product
+architecture yielding the best predictive performance. Note that the number of
+parameters across architectures must be equal for a fair comparison.
+
+To illustrate a scenario where the inner product architecture outperforms the
+residual architecture, suppose the logit function of the data-generating
+distribution has the following form. With two-dimensional embeddings (and a
+single attribute per item) say the logit function is given by
+$f(u, x_m) = \theta_1\beta_1 + \theta_2\beta_2^{10}$. The second dimension of
+the item attribute embedding $\beta$ has been raised to the power of $10$.
+Consider fitting the inner product model with a dimensionality of $2$ to data
+from this generative process. The optimal setting of the item attribute
+embeddings is $\beta^* = (\beta_1, \beta_2^{10})$. Now consider fitting the
+residual model. The requirement that the number of parameters be equal across
+architectures forces the neural network to have less parameters. This limits the
+ability of the residual architecture to learn that the second component of the
+item attribute embedding should be $\beta_2^{10}$, as neural networks with small
+hidden layer size may not be able to approximate complex polynomials.
+
+For an example where the residual model would outperform the inner product
+model, consider the following generative process. The logit function is given by
+$f(u, x_m) = \theta_u^\top \sum_{v\in \xum}\beta_v + \eta(\theta_u, \sum_{v\in
+  \xum} \beta_v)$. Here $\eta$ is some nonlinear function. This generative
+process mirrors \Cref{eq:residual} and is best approximated by the residual
+model. We verified both of these claims with simulation studies.
+
+% How can we ensure our choice of model does not lead to overfitting and enables
+% prediction of held-out data? In recommendation data, one way to define
+% generalization is to consider the matrix of observations of shape users by items
+% $(U, I)$. As $U\rightarrow \infty$ and $I\rightarrow \infty$, it is clear that a
+% model can memorize the training data if the number of parameters is
+% $\mathcal{O}(UI)$. As long as the number of model parameters grows slower than
+% $U$ or $I$, and the model predicts well, generalization is possible.
+
+The above two examples show that the choice of architecture in
+\acrshort{rankfromsets} is data-dependent. To ensure that the model does not
+overfit as new users or items are included in the training data, we need to
+compare the number of parameters to the number of datapoints. A model with
+parameters the size of the training data can overfit by memorizing the training
+data. For generalization to be possible, overfitting can be avoided if the
+number of parameters grows slower than the size of the data. The technical
+backing for this comes from asymptotic statistics and the concept of sieved
+likelihoods~\citet{vaart_1998}. Specifically, the maximum likelihood estimation procedure with the
+objective function in \Cref{eq:objective} can be replaced by maximization of a
+sieved likelihood function. The `sieve' refers to filtering information as the
+number of parameters (in this case, user and item representations) grows with
+the number of observations. The sieved likelihood function enables the analysis
+of asymptotic behavior as the number of users grows $U\rightarrow \infty$ and
+the number of items grows $I\rightarrow \infty$, An example of a technique to
+grow the number of parameters in a way that supports generalization is given in
+Chapter 25 of \citet{vaart_1998}.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "set_recommendation"
+%%% End:

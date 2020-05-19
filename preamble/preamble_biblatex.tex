@@ -1,0 +1,106 @@
+% !TEX root = ../main.tex
+% from victor veitch
+\usepackage[%
+minnames=1,
+maxcitenames=2,
+maxbibnames=99,
+style=authoryear, %alphabetic, numeric, authoryear, apa
+doi=false,
+url=false,
+giveninits=false, % true, false
+hyperref=true,
+natbib=true,
+backend=biber, % biber, bibtex
+uniquename=false,
+uniquelist=false,
+sorting=nyt
+]{biblatex}%
+\renewbibmacro{in:}{} % remove In: before journal
+\DeclareLanguageMapping{american}{american-apa}
+
+% \newbibmacro*{journal}{%
+%   \iffieldundef{journaltitle}
+%     {}
+%     {\printtext[journaltitle]{%
+%        \printfield[noformat]{journaltitle}%
+%        \setunit{\subtitlepunct}%
+%        \printfield[noformat]{journalsubtitle}}}}
+
+% make lower case
+% \DeclareFieldFormat[article,inbook,incollection,inproceedings,patent,thesis,unpublished]{titlecase}{\MakeSentenceCase*{#1}}
+
+\AtEveryBibitem{%
+\ifentrytype{article}{
+    \clearfield{url}%
+    \clearfield{urldate}%
+    \clearfield{eprint}
+    \clearfield{series}
+    \clearfield{volume}
+}{}
+\ifentrytype{book}{
+    \clearfield{url}%
+    \clearfield{urldate}%
+}{}
+\ifentrytype{collection}{
+    \clearfield{url}%
+    \clearfield{urldate}%
+}{}
+\ifentrytype{incollection}{
+    \clearfield{url}%
+    \clearfield{urldate}%
+}{}
+}
+
+\AtEveryBibitem{
+    \clearfield{pages}
+    \clearfield{review}%
+    \clearfield{series}%%
+    \clearfield{volume}
+    \clearfield{issue}
+    \clearfield{number}
+    \clearfield{pages}
+    \clearfield{month}
+    \clearfield{eprint}
+    \clearfield{isbn}
+    \clearfield{issn}
+    \clearlist{location}
+    \clearfield{series}
+    \clearlist{publisher}
+    \clearname{editor}
+}{}
+
+% make hyperref include authors, not only year
+% https://tex.stackexchange.com/questions/15951/hyperlink-name-with-biblatex-authoryear-biblatex-1-4b#comment588801_247554
+\DeclareFieldFormat{citehyperref}{%
+  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+  \bibhyperref{#1}}
+
+\DeclareFieldFormat{textcitehyperref}{%
+  \DeclareFieldAlias{bibhyperref}{noformat}% Avoid nested links
+  \bibhyperref{%
+    #1%
+    \ifbool{cbx:parens}
+      {\bibcloseparen\global\boolfalse{cbx:parens}}
+      {}}}
+
+\savebibmacro{cite}
+\savebibmacro{textcite}
+
+\renewbibmacro*{cite}{%
+  \printtext[citehyperref]{%
+    \restorebibmacro{cite}%
+    \usebibmacro{cite}}}
+
+\renewbibmacro*{textcite}{%
+  \ifboolexpr{
+    ( not test {\iffieldundef{prenote}} and
+      test {\ifnumequal{\value{citecount}}{1}} )
+    or
+    ( not test {\iffieldundef{postnote}} and
+      test {\ifnumequal{\value{citecount}}{\value{citetotal}}} )
+  }
+    {\DeclareFieldAlias{textcitehyperref}{noformat}}
+    {}%
+  \printtext[textcitehyperref]{%
+    \restorebibmacro{textcite}%
+    \usebibmacro{textcite}}}

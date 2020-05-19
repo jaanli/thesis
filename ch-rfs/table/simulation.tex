@@ -1,0 +1,21 @@
+% !TEX root = ../../main.tex
+\begin{table}[tb!]
+\sisetup{table-figures-uncertainty=1}
+\centering
+\begin{tabular}{
+  l
+  S[table-format=1.2,
+   table-figures-uncertainty=1]
+  S[table-format=1.2,
+  table-figures-uncertainty=1]
+  S[table-format=1.2,
+  table-figures-uncertainty=1]
+  }
+  \toprule
+   & {Inner product} & {Deep} & {Residual} \\
+  \midrule
+  Recall & 0.29 \pm 0.15 & 0.32 \pm 0.14 & 0.33 \pm 0.18 \\
+  \bottomrule\\
+\end{tabular}
+\caption[\textsc{rfs} simulation study]{\textbf{A simulation study demonstrating that the choice of     parameterization of \acrlong{rfs} is data-dependent.} We report the   in-matrix recall averaged over 100~users, over 30~replications of the simulation. The residual model in \Cref{eqn:residual}   outperforms the deep model in \Cref{eqn:neural-network} and the inner product   model in \Cref{eqn:rankfromsets}.} \label{tab:simulation}
+\end{table}

@@ -1,0 +1,22 @@
+% !TEX root = ../main.tex
+\newcommand\x{\scalebox{1.6}{\textbullet}}
+\begin{table*}[t]
+    \begin{center}
+    \resizebox{0.9\textwidth}{!}{%
+    \begin{tabular}{@{}lccccccccc|cccccc@{}}
+      & \multicolumn{9}{c}{\bf Attributes} & \multicolumn{1}{c}{\bf                                                 User}\\
+      \cmidrule(lr){2-10} \cmidrule(lr){11-15}
+      {\bf Items} & Pizza & Eggs & Taco & Salad & Avocado & Chicken & Sardines & Beer & Coffee & 1  \\
+      Morning Pizza & \x & \x & & & & & & & \x & \x \\
+      Dinner Pizza & \x & & & & & & \x & \x & &   \\
+      Small Salad & & & & \x & \x & & \x & & &  \\
+      Big Salad & & \x & & \x & \x & \x & & & \x & \x  \\
+      Taco & & & \x & & \x & \x & & & \x &  \\
+      Fish Taco & & & \x & & & & \x & & &  \\
+      \bottomrule
+    \end{tabular}
+    }
+    \caption[Example binary classification data]{\label{tab:example-binary}Example binary classification data. A user consumes meals (rightmost column), and meals have attributes (table on the left. Meals are represented as datapoints $x_n$ with covariates being foods in the meals. The goal of a binary classifier trained on this data is to predict which meals a user will consume, or which datapoints $(x_n, y_n)$ have a label $y_n = 1$. An accurate classifier will information about which covariates are shared across positive or negative labeled datapoints; for example, this user consumes meals that include eggs and coffee.
+    }
+    \end{center}
+\end{table*}

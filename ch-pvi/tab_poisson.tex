@@ -1,0 +1,18 @@
+% !TEX root = ../main.tex
+\begin{table}[tb]
+\centering
+\begin{tabular}{lSS}
+\toprule
+Inference Method & \multicolumn{1}{c} {Perplexity} \\
+\midrule
+Variational Inference & 2329 \\
+\gls{PVI}, Mean/Variance Constraint &\bfseries 2294 \\
+\bottomrule
+\end{tabular}
+% \vspace{1ex}
+\caption[Quantitative \textsc{pvi} results on a deep exponential family model of text]{\textbf{\Acrlong{PVI} with a mean/variance proximity statistic
+improves predictive performance in a deep exponential family model with
+Poisson latent variables.} We report the held-out
+perplexity on the \emph{Science} corpus of journal articles.}
+\label{table:poisson}
+\end{table}

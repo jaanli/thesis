@@ -1,0 +1,18 @@
+% !TEX root = ../main.tex
+\begin{table}[tb]
+\centering
+\begin{tabular}{lSSSS}
+\toprule
+Inference Method & \multicolumn{1}{c}{\gls{ELBO}} & \multicolumn{1}{c}{Likelihood} \\
+\midrule
+Variational Inference  & -116.2 & -104.9 \\
+Deterministic Annealing & -102.0 & -94.2 \\
+\gls{PVI}, Entropy Constraint  & \bfseries -99.7 &\bfseries -93.2\\
+\gls{PVI}, Mean/Variance Constraint  & -100.7 & -93.3 \\
+\bottomrule
+\end{tabular}
+% \vspace{1ex}
+\caption[\textsc{pvi} results for a deep sigmoid belief network]{
+\textbf{\Acrlong{PVI} improves over deterministic annealing and \gls{VI} in a three-layer sigmoid belief network.} The model has three layers of $200$~latent variables. We report the \glsreset{ELBO}\gls{ELBO} and marginal likelihood on the MNIST test set~\citep{pmlr-v15-larochelle11a}.}
+\label{table:sbn_3_layer}
+\end{table}

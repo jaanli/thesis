@@ -1,0 +1,85 @@
+% !TEX root = rankfromsets.tex
+
+\begin{abstract}
+  % Diet tracking apps enable users to track the meals they eat each day. Each meal logged by a user is composed of a collection of ingredients selected from a large, crowdsourced database.
+  We study a variant of user-item recommendation where each item has a set of attributes, such as tags on an image, user reactions to a post, or foods in a meal. We focus on the latter example, with the goal of building a meal recommender for a diet tracking app.  Meal recommendation is challenging:  (i) each item (meal) is rarely logged by more than a handful of users,  (ii) the database of attributes (foods) is large, and (iii) each item is tagged with only a handful of attributes. We  propose \gls{rfs}, a flexible and  scalable class of models for recommending items with attributes. \gls{rfs}  treats item  attributes as set-valued side information and learns embeddings to discriminate items a user will consume from items a user is unlikely to consume. We develop theory connecting the \gls{rfs} objective to optimal recall and show that the learnable  class of models for \gls{rfs} is a superset of several previously-proposed  models. We then develop a stochastic optimization method for \gls{rfs} that uses negative  sampling to scale to massive problems like meal  recommendation. In  experiments on a real dataset of 55k users logging 16M meals, the new method outperforms competing approaches while learning embeddings that reveal interpretable structure in user behavior.
+
+  % Recommendation models suggest items to users. Using a crowdsourced dataset of 55k users logging 16M meals on a food tracking app, we focus on the problem of food recommendation. Every item (meal) in this data has a set of attributes (ingredients). We propose \gls{rfs}, a flexible and scalable class of models for recommending such items with attributes. \gls{rfs} treats item attributes as side information and learns embeddings to discriminate items a user will consume from items a user is unlikely to consume. We develop theory connecting the \gls{rfs} objective to optimal recall and show that the learnable class of models for \gls{rfs} is a superset of several previously-proposed models. To scale \gls{rfs} to large datasets, we propose a stochastic optimization framework based on negative sampling. Within this framework, we suggest two specific negative sampling approaches that trade off computation for accuracy. In experiments on the food tracking data, the \gls{rfs} class of models outperforms competing approaches. In another real-world dataset of researcher reading behavior, \gls{rfs} also demonstrates better performance than common methods while learning embeddings that reveal interpretable structure in user behavior.
+
+  % Code for is available at \url{https://github.com/altosaar/rankfromsets}.
+  % Matrix factorization approaches that handle side-information exist, but they
+  % cannot handle large attribute vocabularies. We consider recommending items
+  % to users in the setting where items have bags of attributes.
+
+  % % problem setup; why is this interesting; motivation - this data occurs often
+  % Every day, users consume items made up of sets of attributes.
+  % % examples of such data
+  % A user might consume a meal that is a set of foods, or a document containing a
+  % set of words.
+  % % the task
+  % We focus on building recommendation models that produce rankings of items
+  % using their sets of attributes.
+  % % there are many possible sets of attributes
+  % But recommending items described by sets is difficult because of the large
+  % number of sets.
+  % % foreshadow desiderata
+  % This means we cannot posit a model with unique parameters for
+  % every set, and requires a model to share information across items with similar
+  % sets of attributes.
+  % % implicitly, sets are order invariant
+  % Models whose output does not depend on the order that set elements are fed to
+  % the model form the class of order-invariant models.
+  % % contribution: we show that existing models the reader is used to fall in
+  % % this class
+  % We show that this class of order-invariant models encompasses existing
+  % recommendation models such as matrix factorization and
+  % permutation-marginalized recurrent neural networks.
+  % % one way of evaluating is recall
+  % One way to assess the performance of a recommendation model is with recall.
+  % % contribution: recall is binary, we note that this leads to classification
+  % Recall is inherently binary: a model does or does not recall an item.
+  % % our algorithm is to fit the parameters via classification
+  % This means we can fit a recommendation model's parameters using classification
+  % to maximize the evaluation metric of recall.
+  % % contribution: we show it approximates other algorithms
+  % We build \acrshort{rankfromsets}, a recommendation model that can approximate
+  % any order-invariant model such as matrix factorization, and that theoretically
+  % maximizes recall.
+  % % contribution: we build a classifier with negative sampling
+  % The model is a classifier parameterized by a neural network,
+  % \acrshort{rankfromsets}, and we develop an algorithm that trains the model to
+  % distinguish items a user consumes from items a user is unlikely to consume.
+  % % contribution: we show it does well
+  % Empirically, we show that this model outperforms other models on recommending
+  % meals from the Lose It! app and recommending documents from the arXiv.
+  % % Interpretability
+  % We also find that the model reveals interpretable patterns in this user
+  % behavior.
+  % % code
+  % Code for \acrshort{rankfromsets} is available at
+  % \url{https://github.com/altosaar/rankfromsets}.
+  % We consider the task of recommending items to users, where each item has a
+  % set of attributes and user feedback is implicit.
+  %   % Our goal is recommendation with implicit data, where each item has a set
+  %   % of attributes.
+  % For example, the item is a meal, the set a bag of foods composing the meal,
+  % and the user implicitly prefers the meal by choosing to eat it. We develop
+  % \acrshort{rankfromsets} (RFS), a flexible recommendation model that
+  % transforms the recommendation problem into classification. RFS learns
+  % attribute embeddings and an order-invariant prediction function that is used
+  % to rank candidate items. Training an RFS model is performed through negative
+  % sampling in a manner that provably maximizes recall.
+  %   % Since our data is implicit, the negative labels need to be defined; we
+  %   % draw from the uniform distribution over items. This algorithm and
+  %   % negative sampling distribution is theoretically justified.
+  %   % We prove that such a classifier maximizes recall.
+  % \acrshort{rankfromsets} outperforms competing methods in empirical
+  % evaluation and learn interpretable embeddings. Code is available at
+  % \href{https://github.com/altosaar/rankfromsets}{https://github.com/altosaar/rankfromsets}.
+\end{abstract}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "set_recommendation"
+%%% TeX-engine: xetex
+%%% End:

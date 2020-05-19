@@ -1,0 +1,42 @@
+% !TEX root = altosaar-2020-thesis.tex
+
+% \appendix
+\label{sec:appendix}
+\section{Probabilistic inference, data, and posterior inference}
+
+In machine learning, the posterior distribution of random variables $\mbz$ conditional on data or observations $\mbx$, $p(\mbz \mid \mbx)$, is a central quantity of interest. However, in applying machine learning to physics, we must specify the concepts of random variables and observations. In the Ising model, random variables are spins, and there is no straightforward concept of observed data. Study of the Boltzmann distribution of the Ising model is probabilistic inference, not posterior inference.
+
+In the Ising model, there are no datapoints $\mbx$; there are only latent variables $\mbz$. Sampling from the model using Monte Carlo would yield only samples of system configurations, not data. In this model, the data can be defined as the empty set $\mbx = \{\}$, so the model evidence $\int p(\mbx, \mbz)d\mbz$ is simply the partition function $Z = \int p(\mbz) d\mbz$. An example of a model that resembles the Ising model that includes observed data is a Markov random field for image denoising~\citep{geman1984stochastic}. In this case, every spin or random variable is connected to a pixel of an image. The concept of data can be included in the Ising model in terms of an external magnetic field.
+
+% \PP probability models are common to both physics and machine learning.
+
+% Probability models are common in physics and machine learning. The Ising model is a statistical physics model of ferromagnetism, and is an example of an undirected graphical model in machine learning. A probability model assigns a probability to a configuration of the system in a certain condition, such as at a specific temperature, or conditional on observed data.
+
+% \PP example; boltzmann
+
+% In statistical physics, an example of a probability model is the Boltzmann distribution,
+% \begin{equation}
+% \label{eq:boltzmann}
+% p(\mbz; \beta) = \frac{\exp(-\beta H(\mbz))}{Z}\, ,
+% \end{equation}
+% where $H$ is the energy function, $\mbz$ are random variables of the system, such as spins, $Z$ is the partition function, and the inverse thermodynamic temperature $\beta$ is a parameter of the probability model (denoted with a semicolon). In machine learning terms, $\mbz$ are latent variables and are unobserved. (We describe the relationship between data and latent variables in \Cref{sec:appendix}.)
+
+% \PP the goal of probabilistic inference is to infer a partition function; a
+% likelihood; a conditional distribution
+
+% Probabilistic inference consists of computing statistical quantities associated with a probability model. Examples of probabilistic inference targets include the partition function; the probability of observing a certain configuration of the system; or, the conditional probability distribution of a probability model after observing data. The Boltzmann distribution, \Cref{eq:boltzmann} can be used to calculate physical quantities, such as specific heat, that can be compared to experimental values and understand the behavior of physical systems.
+
+% \PP probabilistic inference is hard because of the intractable partition
+% function
+
+% Inference in a probability model is challenging. A task such as calculating a probability requires calculating a normalization constant or partition function, which includes a sum over all configurations of the system. For models with many random variables, enumerating the number of configurations is intractable. The Boltzmann distribution cannot be studied directly as the partition function cannot be computed for most systems. The partition function is a sum over an exponentially-large number of system configurations,
+
+% \begin{align}
+% Z &= \sum_{\mbz} \exp(-\beta H(\mbz))\, .
+% \end{align}
+% For example, in an Ising model, spins are in two states $z = \{-1, 1\}$. In an Ising model with $N$ spins, there are $2^N$ terms in the partition function, which cannot be computed in a reasonable time.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main"
+%%% End:

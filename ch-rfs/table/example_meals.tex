@@ -1,0 +1,22 @@
+% !TEX root = ../../main.tex
+% \newcommand\x{\scalebox{1.6}{\textbullet}}
+\begin{table*}[t]
+    \begin{center}
+    \resizebox{1.0\textwidth}{!}{%
+    \begin{tabular}{@{}lccccccccc|cccccc@{}}
+      & \multicolumn{9}{c}{\bf Attributes} & \multicolumn{5}{c}{\bf                                                 Users}\\
+      \cmidrule(lr){2-10} \cmidrule(lr){11-15}
+      {\bf Items} & Pizza & Eggs & Taco & Salad & Avocado & Chicken & Sardines & Beer & Coffee & 1 & 2 & 3 & 4 & 5 \\
+      Morning Pizza & \x & \x & & & & & & & \x & & \x & & \x & \\
+      Dinner Pizza & \x & & & & & & \x & \x & & \x & & & \x & \\
+      Small Salad & & & & \x & \x & & \x & & & & & \x & & \x \\
+      Big Salad & & \x & & \x & \x & \x & & & \x & & & \x & \x & \\
+      Taco & & & \x & & \x & \x & & & \x & & & &  & \x \\
+      Fish Taco & & & \x & & & & \x & & & & \x &  & \x & \\
+      \bottomrule
+    \end{tabular}
+    }
+    \caption[Example recommender systems data of items with attributes]{\label{tab:example-meals}An example of the data we focus on, where tagged items are recommended to users based on both item attributes and items users have consumed in the past. This example dataset of meals contains meals with different foods (left) and users log which meals they ate (right). The goal is to leverage the attributes to recommend items to users.
+    }
+    \end{center}
+\end{table*}

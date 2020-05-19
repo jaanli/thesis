@@ -1,0 +1,15 @@
+% !TEX root = ../main.tex
+\begin{enumerate}
+  \item \textbf{Document model:}
+  \begin{enumerate}
+  \item Draw topics $\beta_{vk} \sim \Gam(a, b)$
+  \item Draw document topic intensities $\theta_{dk} \sim \Gam(c, d)$
+  \item Draw word count $w_{dv} \sim \Pois(\theta_d^T \beta_v)$.
+  \end{enumerate}
+  \item \textbf{Recommendation model:}
+  \begin{enumerate}
+  \item Draw user preferences $\eta_{uk} \sim \Gam(e, f)$
+  \item Draw document topic offsets $\epsilon_{dk} \sim \Gam(g, h)$
+  \item Draw $r_{ud} \sim \Pois(\eta_u^T (\theta_d + \epsilon_d))$.
+  \end{enumerate}
+\end{enumerate}

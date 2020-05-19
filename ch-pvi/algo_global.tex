@@ -1,0 +1,13 @@
+% !TEX root = ../main.tex
+\begin{algorithm}[t]
+\DontPrintSemicolon
+\KwIn{Initial parameters $\mblambda_0$, adaptive learning rate optimizer, proximity statistic $f(\mblambda)$, distance $d$}
+\KwOut{Parameters $\mblambda$ of the variational distribution $q(\mblambda)$ that maximize the \gls{ELBO} objective}
+\While{$\cL_\textrm{proximity}$ not converged} {
+	$\mblambda_{t+1} = \mblambda_t + \rho(\nabla \cL(\mblambda_t) - k \cdot (\nabla d (f(\tmblambda), f(\mblambda_t)) \nabla f(\mblambda_t)).$ \\
+	$\tmblambda = \alpha \tmblambda + (1 - \alpha) \mblambda_{t+1}$
+}
+\Return{$\mblambda$}\;
+\caption{\textbf{Fast Proximity Variational Inference}}
+\label{algo:global}
+\end{algorithm}

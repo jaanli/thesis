@@ -1,0 +1,16 @@
+% !TEX root = altosaar-2020-thesis.tex
+\begin{table}[tb]
+\centering
+\begin{tabular}{lSS}
+\toprule
+Model & \multicolumn{1}{c}{Recall @ 10 (\%)} & \multicolumn{1}{c}{Recall @ 100 (\%)}
+\\
+\midrule
+\gls{rfs} & 0.32 & 2.54\\
+\gls{rfs}, Entropy Constraint &\bfseries 0.44 & 2.54 \\
+\bottomrule
+\end{tabular}
+% \vspace{1ex}
+\caption[\textsc{pvi} results for \textsc{rfs} on arXiv user behavior data]{\textbf{\Acrlong{PVI} with the entropy proximity statistic improves top-10 out-matrix recall of \gls{rfs} fit to arXiv user behavior data.} We report the recall for items with no clicks in the training data (described in \Cref{sec:rfs-experiments}) for the best-performing settings of both \gls{PVI} and \gls{rfs}. Recall at $100$ recommendations is comparable between the methods.}
+\label{tab:pvi-rfs}
+\end{table}

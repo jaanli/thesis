@@ -1,0 +1,16 @@
+% !TEX root = ../main.tex
+\begin{algorithm}[t]
+\DontPrintSemicolon
+\KwIn{Initial parameters $\mblambda_0$, proximity statistic $f(\mblambda)$, distance function $d$}
+\KwOut{Parameters $\mblambda$ of variational $q(\mblambda)$ that maximize the \gls{ELBO} objective}
+\While{$\cL$ not converged} {
+  $\mblambda_{t+1} \gets \mblambda_t + \textrm{Noise}$\\
+  \While{U not converged} {
+    Update $\mblambda_{t+1} \gets \mblambda_{t+1} + \rho \nabla_{\mblambda}U(\mblambda_{t+1})$
+  }
+  $\mblambda_t \gets \mblambda_{t+1}$\;
+}
+\Return{$\mblambda$}\;
+\caption{\textbf{Proximity Variational Inference}}
+\label{algo:local}
+\end{algorithm}

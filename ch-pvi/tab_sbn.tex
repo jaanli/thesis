@@ -1,0 +1,17 @@
+% !TEX root = ../main.tex
+\begin{table}[tb]
+\centering
+\label{table:sbn_1_layer}
+\begin{tabular}{lSSSS}
+\toprule
+Inference Method & \multicolumn{1}{c}{\gls{ELBO}} & \multicolumn{1}{c}{Likelihood} \\
+\midrule
+Variational Inference  & -121.4 & -113.7 \\
+Deterministic Annealing  & -116.8 & -108.8 \\
+\gls{PVI}, Entropy Constraint  & \bfseries -113.3 &\bfseries -106.7 \\
+\gls{PVI}, Mean/Variance Constraint & -114.9 & -107.4 \\
+\bottomrule
+\end{tabular}
+% \vspace{1ex}
+\caption[\textsc{pvi} results for a sigmoid belief network]{\textbf{\Acrlong{PVI} improves on deterministic annealing~\citep{Katihara:2008} and \gls{VI} in a one-layer sigmoid belief network.} We report the test set \glsreset{ELBO}\gls{ELBO} and marginal likelihood on the binary MNIST dataset~\citep{pmlr-v15-larochelle11a}. The model has one stochastic layer of $200$~latent variables. \gls{PVI} outperforms deterministic annealing~\citep{Katihara:2008} and the classical variational inference algorithm.}
+\end{table}

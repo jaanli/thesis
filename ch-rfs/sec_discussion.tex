@@ -1,0 +1,86 @@
+% !TEX root = rankfromsets.tex
+\section{Discussion}
+The task of recommending items with attributes is difficult for several reasons. It is unclear how to incorporate set-valued side information into models that scale to large numbers of items and attributes. In addition, existing recommendation models that leverage item attributes (for example, content-based matrix factorization) are not directly tied to evaluation metrics. We developed \gls{rfs}, a class of scalable recommendation models for items with attributes. Theoretically, we showed that optimizing the \gls{rfs} objective optimizes recall, and that \gls{rfs} can approximate permutation-invariant recommendation models including content-based matrix factorization. Empirically, models in the \gls{rfs} class outperform competing models and scale to large datasets, such as our motivating problem of meal recommendation for 55k users who consume 16M meals.
+
+How well does binary classification perform for other ranking-based recommendation metrics, such as non-discounted cumulative gain? Analyzing this question is more difficult, and we leave this to future work. For generalization theory, we conjecture that a different loss function should allow a similar proof to \Cref{prop:maximizing-recall}. With sufficient data, \gls{rfs} can learn arbitrary distributions of users consuming items with attributes. But performance on finite data can vary, and developing generalization theory for \gls{rfs} remains an open question.
+
+% \paragraph{Simple theory and implementation} It is surprising that \gls{rfs}
+% outperforms the collaborative topic Poisson factorization model in
+% \citet{gopalan2014content-based}, as \gls{rfs} is a much simpler model.
+% \gls{rfs} does not require approximate posterior inference as in \gls{ctpf}, but
+% mere binary classification. \gls{rfs} is also simpler in terms of
+% implementation: a scalable example is a few dozen lines of python in
+% \Cref{sec:code}, compared to several thousand lines of C++ released by the
+% authors of \gls{ctpf}.
+
+% \paragraph{Architectures} There is a wealth of deep learning models that can be
+% used to parameterize \gls{rfs}. For example, attention-based transformer
+% networks can operate on set-valued input~\citep{lee2018set-transformer} and are
+% an interesting choice of architecture for \gls{rfs}.
+
+% larger batch sizes on cpu
+% For good performance on the arXiv dataset, large batch sizes were necessary. We
+% were limited in batch size due to our use of a GPU. Reimplementing the model in
+% C++ would free the model from GPU memory restrictions, enabling larger batch
+% sizes and better performance.
+% optimization: ctpf benefits from coordinate ascent
+% \paragraph{Optimization} Collaborative topic Poisson factorization as the latter
+% enjoys an efficient optimization algorithm. The conjugacy properties of the
+% matrix factorization model permit coordinate ascent and fast convergence in few
+% iterations. The nonconvex objective function that \gls{rfs} relies on may be
+% amenable to certain optimization techniques, such as dual coordinate
+% ascent~\citep{yu2011dual}, and we leave this to future work.
+
+% \paragraph{Side information} The \gls{rfs} model can easily accommodate various
+% metadata about users, items, or attributes. Attribute-level or user-level side
+% information is particularly interesting, and when available, should lead to
+% improved recommendation performance.
+
+% % we did not study regularization
+% \paragraph{Regularization} Further performance gains from regularizing \gls{rfs}
+% are also interesting avenues for future work. L2 regularization for sparsity and
+% dropout for decorrelation may yield improvements.
+
+% RMSProp~\citep{graves2013generating} was also tested when fitting
+% \gls{rfs} to the arXiv data. This optimizer outperformed
+% collaborative topic Poisson factorization in terms of both in-matrix precision
+% and recall, but matched the performance of the matrix factorization model in
+% terms of out-matrix precision and recall. This means there are tradeoffs of
+% using different optimizers that depend on the data and evaluation metrics of
+% interest.
+% initializing to word2vec
+% \paragraph{Pretrained embeddings} We note that the word embedding baseline
+% performed slightly worse as collaborative topic Poisson factorization, which is
+% surprising given that the word embedding model is much simpler. Further
+% performance gains in \gls{rfs} should be possible by initializing user and item
+% attribute embeddings to pretrained word embeddings as in \citet{chen2017joint}.
+
+% % gap in prop 2
+% \paragraph{Theory (approximation)} \Cref{prop:universal-approximation} means
+% that \gls{rfs} can approximate the output of any order-invariant model
+% such as matrix factorization. However, there is no guarantee that fit with
+% maximum likelihood estimation using the objective in \Cref{eq:objective},
+% \gls{rfs} \emph{will} approximate a specific model. We leave the development of
+% such approximation techniques to future work.
+% out-of-vocabulary words
+% An open question is how to account for new attributes, for example in
+% crowdsourced data. An extension of this work would be to combine it with
+% character-level embeddings as in \citep{bojanowski2017enriching} to enable the
+% model to better perform recommendations for out-of-vocabulary attributes.
+% can we optimize metrics other than recall?
+
+
+% \section*{Acknowledgments}
+% % and emotional support
+% J.A. is grateful to Mark Goldstein and Bharat Srikisan for helpful
+% discussions, and to Kyle Cranmer
+% and the Center for Data Science at New York University for desk space. The
+% experiments presented in this article were performed on computational resources
+% supported by the Princeton Institute for Computational Science and Engineering
+% and the Office of Information Technology's High Performance Computing Center and
+% Visualization Laboratory at Princeton University.
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "set_recommendation"
+%%% End:

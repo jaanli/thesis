@@ -1,0 +1,24 @@
+% !TEX root = ../main.tex
+
+\begin{abstract}
+
+Variational inference is a powerful approach for approximate posterior
+inference. However, it is sensitive to initialization and can be subject to poor
+local optima. In this paper, we develop \gls{PVI}. \gls{PVI} is a new method for
+optimizing the variational objective that constrains subsequent iterates of the
+variational parameters to robustify the optimization path. Consequently,
+\gls{PVI} is less sensitive to initialization and optimization quirks and finds
+better local optima. We demonstrate our method on four proximity statistics. We
+study \gls{PVI} on a Bernoulli factor model and sigmoid belief network fit to
+real and synthetic data and compare to deterministic
+annealing~\citep{Katihara:2008}. We highlight the flexibility of \gls{PVI} by
+designing a proximity statistic for Bayesian deep learning models such as the
+variational autoencoder~ \citep{kingma2014autoencoding,rezende2014stochastic}
+and show that it gives better performance by reducing overpruning. \gls{PVI}
+also yields improved predictions in a deep generative model
+of text. Empirically, we show that \gls{PVI} consistently finds better local
+optima and gives better predictive performance.
+
+\end{abstract}
+
+% Variational inference is a powerful approach for approximate posterior inference. However, it is sensitive to initialization and can be subject to poor local optima. In this paper, we develop PVI. PVI is a new method for optimizing the variational objective that constrains subsequent iterates of the variational parameters to robustify the optimization path. Consequently, PVI is less sensitive to initialization and optimization quirks and finds better local optima. We demonstrate our method on three proximity statistics. We study PVI on a Bernoulli factor model and sigmoid belief network fit to real and synthetic data and compare to deterministic annealing (Katihara, 2008). We highlight the flexibility of PVI by designing a proximity statistic for Bayesian deep learning models such as the variational autoencoder (Kingma and Welling, 2014; Rezende et al., 2014) and show that it gives better performance by reducing overpruning. PVI also yields improved predictions in a Poisson factor analysis model of text. Empirically, we show that PVI consistently finds better local optima and gives better predictive performance.

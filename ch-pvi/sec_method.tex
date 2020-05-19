@@ -1,0 +1,79 @@
+% !TEX root = ../main.tex
+\section{Proximity Variational Inference}
+\label{sec:pvi}
+\input{ch-pvi/algo_local}
+We now develop \gls{PVI}, a variational inference method that is robust to initialization and can consistently reach good local optima (\Cref{sec:method}).  \gls{PVI} alters the notion of proximity. We further restrict the iterates of the variational parameters by deforming the Euclidean ball implicit in classical gradient ascent. This is done by choosing proximity statistics that are not the identity function, and distance functions that are different than the square difference. These design choices help guide the variational parameters away from poor local optima (\Cref{sec:proximity_examples}).  One drawback of the proximity perspective is that it requires an inner optimization at each step of the outer optimization. We use a Taylor expansion to avoid this computational burden (\Cref{sec:proximity_taylor}).
+
+\subsection{Proximity Constraints for Variational Inference}
+\label{sec:method}
+\gls{PVI} enriches the proximity constraint in gradient ascent of the \gls{ELBO}.  We want to develop constraints on the iterates $\mblambda_t$ to counter the pathologies of standard variational inference.
+
+Let $f(\cdot)$ be a \emph{proximity statistic}, and let $d$ be a differentiable
+distance function that measures distance between proximity statistic iterates. A \emph{proximity constraint} is the combination of a distance function $d$ applied to a proximity statistic $f$. (Recall that in classical gradient ascent, the Euclidean proximity constraint uses the identity as the proximity statistic and the square difference as the distance.) Let $k$ be the scalar magnitude of the proximity constraint. We define the proximity update equation for the variational parameters $\mblambda_{t+1}$ to be
+\begin{align}
+  \begin{split}
+    U(\mblambda_{t+1}) = &\cL(\mblambda_t)
+    + \nabla \cL(\mblambda_t)^\top (\mblambda_{t+1}-\mblambda_t)
+    %\\ %&
+    -
+    \frac{1}{2\rho}
+    (\mblambda_{t+1}-\mblambda_t)^\top (\mblambda_{t+1}-\mblambda_t) %\\&
+    - k \cdot d(f(\tmblambda), f(\mblambda_{t+1})),
+  \end{split}
+  \label{eq:f-constrained}
+\end{align}
+where $\tmblambda$ is the variational parameter to which we are measuring closeness. In gradient ascent, this is the previous parameter $\tmblambda = \mblambda_t$, but our construction can enforce proximity to more than just the previous parameters. For example, we can set $\tmblambda$ to be an exponential moving average\footnote{The exponential moving average of a variable $\mblambda$ is denoted $\tmblambda$ and is updated according to $\tmblambda \leftarrow \alpha\tmblambda + (1-\alpha)\mblambda$, where $\alpha$ is a decay close to one.}---this adds robustness to one-update optimization missteps.
+
+The next parameters are found by maximizing \Cref{eq:f-constrained}.  This enforces that the variational parameters between updates will remain close in the proximity statistic $f(\mblambda)$.  For example, $f(\mblambda)$ might be the entropy of the variational approximation; this can avoid zeroing out some of its support.  This procedure is detailed in \Cref{algo:local}. The magnitude $k$ of the constraint is a hyperparameter. The inner optimization loop optimizes the update equation $U$ at each step.
+\input{ch-pvi/algo_global}
+
+\subsection{Proximity Statistics for Variational Inference}
+\label{sec:proximity_examples}
+We describe four proximity statistics $f(\mblambda)$ appropriate for variational inference.  Together with a distance function, these proximity statistics yield proximity constraints. (We study them in \Cref{sec:pvi-experiments}.)
+
+\parhead{Entropy Proximity Statistic.} Consider a constraint built from the entropy proximity statistic, $f(\mblambda) = \mathrm{H}(q(\mbz; \mblambda))$. Informally, the entropy measures the amount of randomness present in a distribution.  High entropy distributions look more uniform across their support; low entropy distributions are peaky.
+
+Using the entropy in \Cref{eq:f-constrained} constrains all updates to have entropy close to their previous update. When the variational distributions are initialized with large entropy, this statistic balances the ``zero-forcing'' issue that is intrinsic to variational inference~\citep{mackay2003information}.  \Cref{fig:bernoulli_arrows} demonstrates how \gls{PVI} with an entropy constraint can correct this pathology.
+
+\parhead{KL Proximity Statistic.} We can rewrite the \gls{ELBO} to
+include the \gls{KL} between the approximate posterior and the prior \citep{kingma2014autoencoding},
+\begin{align*}
+  \cL(\mblambda) =
+  \E [ \log p(\mb{x} \mid \mb{z})] - \mathrm{KL}(q(\mbz \mid \mbx; \mblambda) || p(\mbz) ).
+\end{align*}
+Flexible models tend to minimize the \gls{KL} divergence too quickly and get stuck in poor optima~\citep{DBLP:conf/conll/BowmanVVDJB16}. The choice of \gls{KL} as a proximity statistic prevents the \gls{KL} from being optimized too quickly relative to the likelihood.
+
+\parhead{Mean/Variance Proximity Statistic.} A common theme in the problems with variational inference is that the bulk of the probability mass can quickly move to a point where that dimension will no longer be explored~\citep{Burda2016}. One way to address this is to restrict the mean and variance of the variational approximation to change slowly during optimization. This constraint only allows higher order moments of the variational approximation to change rapidly. The mean $\mu=\E_{q(\mbz; \mblambda)}[\mbz]$ and variance $\textrm{Var}(\mbz) = \E_{q(\mbz; \mblambda)}[(\mbz - \mu)^2]$ are the statistics $f(\mblambda)$ we constrain.
+
+\parhead{Orthogonal Proximity Statistic.} In Bayesian deep learning models such as the variational autoencoder~\citep{kingma2014autoencoding,rezende2014stochastic} it is common to parametrize the variational distribution with a neural network. Orthogonal weight matrices make optimization easier in neural networks by allowing gradients to propagate further~\citep{saxe2013exact}. We can exploit this fact to design an orthogonal proximity statistic for the weight matrices $W$ of neural networks: $f(W) = WW^\top$. With an orthogonal initialization for the weights, this statistic enables efficient optimization.
+
+We gave four examples of proximity statistics that, together with a distance function, yield proximity constraints. We emphasize that any function of the variational parameters $f(\mblambda)$ can be designed to ameliorate issues with variational inference. We discuss how to select a proximity statistic in \Cref {sec:discussion}.
+
+\subsection{Taylor-expanding the Proximity Constraint for Speed}
+\label{sec:proximity_taylor}
+\gls{PVI} in \Cref{algo:local} requires optimizing the update equation, \Cref{eq:f-constrained}, at each iteration. This rarely has a closed-form solution and requires a separate optimization procedure that is computationally expensive.
+
+An alternative is to use a first-order Taylor expansion of the proximity constraint. Let $\nabla d$ be the gradient with respect to the second argument of the distance function, and $f(\tmblambda)$ be the first argument to the distance. We compute the expansion around $\mblambda_t$ (the variational parameters at step $t$),
+\begin{align*}
+  U(\mblambda_{t+1}) = &\cL(\mblambda_t) + \nabla \cL(\mblambda_t)^\top(\mblambda_{t+1}-\mblambda_t) \\
+                       &- \frac{1}{2\rho} (\mblambda_{t+1}-\mblambda_t)^\top (\mblambda_{t+1}-\mblambda_t)\\
+                       & - k \cdot (d(f(\tmblambda), f(\mblambda_{t}))  \\
+                       &+ \nabla d (f(\tmblambda), f(\mblambda_t)) \nabla f(\mblambda_t)^\top (\mblambda_{t+1}-\mblambda_t)).
+\end{align*}
+This Taylor expansion enjoys a closed-form solution for the variational parameters $\mblambda_{t+1}$,
+\begin{align}
+  \mblambda_{t+1} = \mblambda_t + \rho(\nabla \cL(\mblambda_t) - k \cdot (\nabla d (f(\tmblambda), f(\mblambda_t)) \nabla f(\mblambda_t)).
+  \label{eq:fast-update}
+\end{align}
+Note that setting $\tmblambda$ to the current parameter $\mblambda_t$ removes the proximity constraint. Distance functions are minimized at zero so their derivative is zero at that point.
+
+Fast \gls{PVI} is detailed in \Cref{algo:global}. Unlike \gls{PVI} in \Cref{algo:local}, the update in \Cref{eq:fast-update} does not require an inner optimization. Fast \gls{PVI} is tested in \Cref{sec:case-study}. The complexity of fast \gls{PVI} is similar to standard \gls{VI} because fast \gls{PVI} optimizes the \gls{ELBO} subject to the distance constraint in $f$. (The added complexity comes from computing the derivative of $f$; no inner optimization loop is required.)
+
+Finally, note that fast \gls{PVI} implies a global objective which varies over time.  It is
+\begin{align*}
+% \begin{split}
+  \cL_{\textrm{proximity}}(\mblambda_{t+1}) = &\E_q [ \log p(\mbx, \mbz)] - \E_q [ \log q(\mblambda_{t+ 1})] %\\&
+  - k \cdot d(f(\tmblambda), f(\mblambda_{t+1})).
+% \end{split}
+\end{align*}
+Because $d$ is a distance, this remains a lower bound on the evidence, but where new variational approximations remain close in $f$ to previous iterations' distributions.

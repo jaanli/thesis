@@ -1,0 +1,177 @@
+%!TEX TS-program = xetex
+%!TEX encoding = UTF-8 Unicode
+
+%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%  Online mode  %%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\providecommand{\chooselayout}{\documentclass[11pt,lot,lof,twoside]{puthesis}}
+\providecommand{\modifyoutput}{}
+
+% %%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%  Print Mode  %%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%
+
+% \providecommand{\chooselayout}{\documentclass[12pt,twoside,longbibliography,nofootinbib,preprintnumbers,singlespace]{puthesis}}
+% \providecommand{\modifyoutput}{\newcommand{\printmode}{}}
+
+\chooselayout
+\modifyoutput
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Author & title page info
+
+\title{\LARGE{\lettrine[image=true,lines=1]{design/P}{robabilistic} Modeling of}\\ \LARGE{Structure in Science:}\\
+\LARGE{Statistical Physics to Recommender Systems}}
+\submitted{June 2020}  % degree conferral date (January, April, June, September, or November)
+\copyrightyear{2020}  % year in which the copyright is secured by publication of the dissertation.
+\author{{Jaan Altosaar}}
+\adviser{David Blei and Shivaji Sondhi}  %replace with the full name of your adviser
+%\departmentprefix{Program in}  % defaults to "Department of", but programs need to change this.
+\department{Physics}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Tweak float placements
+
+% From: http://mintaka.sdsu.edu/GF/bibliog/latex/floats.html "Controlling LaTeX Floats"
+% and based on: http://www.tex.ac.uk/cgi-bin/texfaq2html?label=floats
+% LaTeX defaults listed at: http://people.cs.uu.nl/piet/floats/node1.html
+
+% Alter some LaTeX defaults for better treatment of figures:
+% See p.105 of "TeX Unbound" for suggested values.
+% See pp. 199-200 of Lamport's "LaTeX" book for details.
+%   General parameters, for ALL pages:
+\renewcommand{\topfraction}{0.85} % max fraction of floats at top
+\renewcommand{\bottomfraction}{0.6} % max fraction of floats at bottom
+%   Parameters for TEXT pages (not float pages):
+\setcounter{topnumber}{2}
+\setcounter{bottomnumber}{2}
+\setcounter{totalnumber}{4}     % 2 may work better
+\setcounter{dbltopnumber}{2}    % for 2-column pages
+\renewcommand{\dbltopfraction}{0.66}  % fit big float above 2-col. text
+\renewcommand{\textfraction}{0.15}  % allow minimal text w. figs
+%   Parameters for FLOAT pages (not text pages):
+\renewcommand{\floatpagefraction}{0.66} % require fuller float pages
+% N.B.: floatpagefraction MUST be less than topfraction !!
+\renewcommand{\dblfloatpagefraction}{0.66}  % require fuller float pages
+
+% The documentclass already sets parameters to make a high penalty for widows and orphans.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Use packages
+
+\input{preamble/preamble.tex}
+\input{preamble/preamble_math.tex}
+\input{preamble/preamble_acronyms.tex}
+\input{preamble/preamble_biblatex}
+\addbibresource{bib.bib}
+\addbibresource{ch-hvm/bib.bib}
+\addbibresource{ch-rfs/bib.bib}
+\addbibresource{ch-pvi/bib.bib}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Custom imports
+
+%% Lettrine and ornament options
+
+\usepackage{Zallman,lettrine}
+\renewcommand\LettrineFontHook{\Zallmanfamily}
+
+\PassOptionsToPackage{svgnames}{xcolor}
+\usepackage[object=vectorian]{pgfornament}
+\usepackage{lipsum,tikz}
+
+\newcommand{\sectionline}{
+  \noindent
+  \begin{center}
+  {
+    \resizebox{0.5\linewidth}{1ex}
+    {{%
+    {\begin{tikzpicture}
+    \node  (C) at (0,0) {};
+    \node (D) at (9,0) {};
+    \path (C) to [ornament=88] (D);
+    \end{tikzpicture}}}}}%
+    \end{center}
+  }
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Printed vs. online formatting
+\ifdefined\printmode
+
+% Printed copy
+\usepackage{url}
+
+\else
+
+% Online copy
+\usepackage{hyperref}
+\usepackage[all]{hypcap}
+% cleveref must come after hyperref
+\usepackage[capitalize,nameinlink]{cleveref}
+\Crefname{prop}{Proposition}{Propositions}
+
+\hypersetup{colorlinks,bookmarksnumbered,
+  linkcolor  = mylinkcolor!\myshade!black,
+  citecolor  = mycitecolor!\myshade!black,
+  urlcolor   = myurlcolor!\myshade!black,
+}
+
+\fi
+
+% Set PDF attributes
+\makeatletter
+\hypersetup{pdftitle=%INSERT title here,
+            pdfauthor=\@author}
+\makeatother
+
+% Front-matter
+% For early drafts, you may want to disable some of the frontmatter. Simply change this to "\ifodd 1" to do so.
+\ifodd 0
+
+\renewcommand{\maketitlepage}{}
+\renewcommand*{\makecopyrightpage}{}
+\renewcommand*{\makeabstract}{}
+
+\else
+
+\input{sec_abstract}
+\input{sec_acks}
+
+\fi
+
+\author{Jaan Altosaar}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%\
+%%%% Main document, appendices and bibliography
+
+\begin{document}
+\makefrontmatter
+
+\input{ch_intro}
+\input{ch_background}
+
+\input{ch_hvm}
+\input{ch-hvm/sec_intro}
+\input{ch-hvm/sec_method}
+\input{ch-hvm/sec_experiments}
+
+\input{ch_rfs}
+\input{ch-rfs/sec_intro}
+\input{ch-rfs/sec_method}
+\input{ch-rfs/sec_models}
+\input{ch-rfs/sec_experiments}
+\input{ch-rfs/sec_background}
+\input{ch-rfs/sec_discussion}
+\input{ch-rfs/sec_appendix}
+
+\input{ch_pvi}
+\input{ch-pvi/sec_intro}
+\input{ch-pvi/sec_method}
+\input{ch-pvi/sec_experiments}
+\input{ch-pvi/sec_discussion}
+
+\input{ch_discussion}
+
+\printbibliography[heading=bibintoc,title={Bibliography}]
+\end{document}

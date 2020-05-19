@@ -1,0 +1,22 @@
+\begin{table}[!h]
+\centering
+\begin{tabular}{lcccccc}
+  \toprule
+\# recommendations  & 10 & 30 & 50 & 70 & 100 \\
+  \midrule
+Recall (percent) & 0.02 & 0.06 & 0.11 & 0.14 & 0.21 \\
+\bottomrule\\
+\end{tabular}
+\caption{\textbf{The permutation-marginalized LSTM model performs poorly on the
+    arXiv dataset of researcher reading behavior in terms of in-matrix recall.}
+  We report the held-out recall averaged over 100~users due to the computational
+  constraints of the model. It is much lower than that of other methods, but
+  better than random.}
+\label{tab:lstm-arxiv}
+\end{table}
+
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "../set_recommendation"
+%%% End:

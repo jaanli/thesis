@@ -1,0 +1,145 @@
+% !TEX root = ../main.tex
+
+% FONTS
+% \usepackage[utf8]{inputenc} % allow utf-8 input
+\usepackage[T1]{fontenc}
+\usepackage{tgtermes}
+\usepackage{amsmath} % needed for recognizing equation labels
+\usepackage{enumitem}
+
+
+% Replace default Latin Modern typewriter with its proportional counterpart
+% http://www.tug.dk/FontCatalogue/lmoderntypewriterprop/
+% \renewcommand*\ttdefault{lmvtt}
+
+%%% OPTION 3 - MTPRO 2 Math + Termes Times + ParaType Sans
+
+% \usepackage{tgtermes}
+% \usepackage{amsmath}
+% \usepackage[subscriptcorrection,
+%             amssymbols,
+%             mtpbb,
+%             mtpcal,
+%             nofontinfo  % suppresses all warnings
+%            ]{mtpro2}
+\usepackage[scaled=0.92]{PTSans}
+
+% NOTE: MUST UNCOMMENT IF NOT USING MTPRO2
+\usepackage{amssymb}
+\newcommand{\mathbold}[1]{\ensuremath{\boldsymbol{\mathbf{#1}}}}
+\usepackage{mathspec}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+\setmainfont{Gill Sans}
+\setmathsfont(Digits,Latin,Greek){Gill Sans}
+
+\usepackage{scalefnt,letltxmacro}
+\LetLtxMacro{\oldtextsc}{\textsc}
+\renewcommand{\textsc}[1]{\oldtextsc{\scalefont{1.10}#1}}
+% \usepackage[ttdefault=true]{AnonymousPro}
+
+% COLOR
+\usepackage[usenames,dvipsnames]{xcolor}
+\definecolor{shadecolor}{gray}{0.9}
+
+% TABLE ALIGNMENT
+\usepackage{etoolbox,siunitx}
+\robustify\bfseries
+\sisetup{detect-weight=true, detect-shape=true, detect-mode=true,
+table-format=5.1, table-number-alignment=center}
+
+% SPACING and TEXT
+\usepackage[final,expansion=alltext]{microtype}
+\usepackage[english]{babel}
+\usepackage[parfill]{parskip}
+\usepackage{afterpage}
+\usepackage{framed}
+\usepackage{nicefrac}
+
+% EDITING
+% line numbering in left margin
+\usepackage{lineno}
+\renewcommand\linenumberfont{\normalfont
+                             \footnotesize
+                             \sffamily
+                             \color{SkyBlue}}
+% ragged paragraphs in right margin
+\usepackage{ragged2e}
+\DeclareRobustCommand{\sidenote}[1]{\marginpar{
+                                    \RaggedRight
+                                    \textcolor{Plum}{\textsf{#1}}}}
+
+% Define a paragraph header function
+\DeclareRobustCommand{\parhead}[1]{\textbf{#1}~}
+
+% paragraph helper
+\DeclareRobustCommand{\PP}{\textcolor{Plum}{\P}~}
+\DeclareRobustCommand{\pp}{\textcolor{Plum}{\P}~}
+
+% COUNTERS
+\renewcommand{\labelenumi}{\color{black!67}{\arabic{enumi}.}}
+\renewcommand{\labelenumii}{{\color{black!67}(\alph{enumii})}}
+\renewcommand{\labelitemi}{{\color{black!67}\textbullet}}
+
+% FIGURES
+\usepackage{graphicx}
+\usepackage[labelfont=bf]{caption}
+\usepackage[format=hang]{subcaption}
+
+% TABLES
+\usepackage{booktabs}
+
+% BIBLIOGRAPHY
+% use [square, numbers]{natbib} for numbered
+\usepackage{natbib}
+
+% ALGORITHMS
+\usepackage[algoruled]{algorithm2e}
+\usepackage{listings}
+\usepackage{fancyvrb}
+\fvset{fontsize=\normalsize}
+
+% HYPERREF
+\usepackage[colorlinks,linktoc=all]{hyperref}
+% \usepackage[all]{hypcap}
+\hypersetup{citecolor=Violet}
+\hypersetup{linkcolor=black}
+\hypersetup{urlcolor=MidnightBlue}
+
+% URLs
+\usepackage{url}
+
+% CLEVEREF must come after HYPERREF
+\usepackage[nameinlink]{cleveref}
+
+% ACRONYMS
+\usepackage[acronym,smallcaps,nowarn]{glossaries}
+\glsdisablehyper{}
+% \makeglossaries
+
+% COLOR DEFINITIONS
+\newcommand{\red}[1]{\textcolor{BrickRed}{#1}}
+\newcommand{\orange}[1]{\textcolor{BurntOrange}{#1}}
+\newcommand{\green}[1]{\textcolor{OliveGreen}{#1}}
+\newcommand{\blue}[1]{\textcolor{MidnightBlue}{#1}}
+\newcommand{\gray}[1]{\textcolor{black!60}{#1}}
+
+% LISTINGS DEFINTIONS
+\usepackage{listings}
+\lstdefinestyle{alp_style}{
+    commentstyle=\color{OliveGreen},
+    numberstyle=\tiny\color{black!60},
+    stringstyle=\color{BrickRed},
+    basicstyle=\ttfamily\scriptsize,
+    breakatwhitespace=false,
+    breaklines=true,
+    captionpos=b,
+    keepspaces=true,
+    numbers=none,
+    numbersep=5pt,
+    showspaces=false,
+    showstringspaces=false,
+    showtabs=false,
+    tabsize=2
+}
+\lstset{style=alp_style}

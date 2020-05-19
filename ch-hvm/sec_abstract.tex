@@ -1,0 +1,10 @@
+% !TEX root = altosaar-2020-thesis.tex
+
+\begin{abstract}
+  The Boltzmann distribution of a statistical physics model can be studied using the variational principle.  However, the variational principle requires deriving model-specific approximations to the Boltzmann distribution. We review \gls{vi}, a machine learning framework for inferring distributions, and show it is equivalent to the \acrlong{gbf} variational principle in physics. The \gls{vi} perspective can be useful, as recent \gls{vi} methods do not require model-specific derivations. For example, \glspl{van} are generic variational approximations for statistical physics models~\citep{wu2019solving}. But \glspl{van} were developed using a reinforcement learning approach, so framing \citet{wu2019solving} as \gls{vi} allows comparison to a plethora of variational approximations from the \gls{vi} literature. As one example, we test \glspl{hvm} as variational approximations~\citep{ranganath2016hierarchical} for statistical physics models. \glspl{hvm} allow efficient sampling of system configurations, and we show that \glspl{hvm} therefore scale to larger systems than \glspl{van} \citep{wu2019solving}.
+\end{abstract}
+
+%%% Local Variables:
+%%% mode: latex
+%%% TeX-master: "main.tex"
+%%% End:

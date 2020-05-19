@@ -1,0 +1,119 @@
+% !TEX root = ../main.tex
+\input{ch-rfs/table/background}
+\section{Related Work}
+We survey food recommender systems and recommendation models, focusing on models that leverage content information and scale to large numbers of users, items, and attributes.
+
+Existing food recommendation systems focus on healthy recommendation~\citep{trattner2019an-evaluation,freyne2011recipe,khan2019personalized,yang2017yum-me:}, while \gls{rfs} focuses on the scalability challenge of meal recommendation. After training a recommendation model, it is possible to filter the recommendations by nutritional information to nudge users towards healthier eating habits~\citep{elsweiler2017exploiting}; such approaches can be used to include nutritional information into \gls{rfs} recommendations. When data is used in food recommender systems, it is usually recipe data~\citep{trattner2017food}; \gls{rfs} is designed to recommend meals using crowdsourced food consumption data which may accurately reflect user behavior~\citep{trattner2019what}.
+
+We highlight several themes in research on recommendation models. We describe recommendation models that incorporate side information, models that recommend through classification, and models that optimize proxies of ranking metrics. This related work is summarized in~\Cref{tab:background}. We focus on deep learning-based and matrix factorization methods to include side information in recommendation models. Item side information can be modeled with deep representations or can be included in content-based matrix factorization models as an additional matrix. Some deep learning approaches scale to large datasets, but may not have objective functions tied to evaluation metrics, or may require data beyond user-item interactions~\citep{okura2017embedding-based}. Content-based matrix factorization methods require learning parameters for every item, and do not scale to data with large numbers of items~\citep{wang2011collaborative,gopalan2014content-based}, whereas \gls{rfs} scales and is tied to evaluation.
+
+% \citep{zhang2017deep,bansal2016ask-the-gru:,lian2018towards,dong2017a-hybrid,chen2017joint,liang2018trsdl:,zuo2016tag-aware,xu2017tag-aware}
+\paragraph{Deep Representations of Side Information.} Deep learning-based recommendation models incorporate side information in multiple ways \citep{zhang2017deep}. For example, items that have words as attributes can be represented using neural networks~\citep{bansal2016ask-the-gru:,chen2018a-collective} or embeddings~\citep{wu2018starspace:}. \gls{rfs} uses both embeddings and deep learning techniques such as residual networks~\citep{he2015deep} to include side information. \citet{lian2018towards} use an attention mechanism to weight recommendations according to available item and user side information, and \citet{dong2017a-hybrid} use denoising autoencoders to model side information in a deep recommendation model, but these methods require fitting parameters for every item and hence cannot scale. An example of a more efficient approach is the method in \citet{chen2017joint}, where embeddings are jointly learned for users, items, and item text for recommendation, but this method focuses on unsupervised pre-training of text representations. \gls{rfs} is complementary to such approaches, as the user, attribute, and item embeddings can be initialized using pre-training. Deep structured semantic models are designed for document retrieval given query words~\citep{huang2013learning,palangi2016deep}; it is unclear how to use this setup for recommending items with set-valued side information to users. There are several examples of `tag-aware' or `tag-based' deep recommendation models~\citep{liang2018trsdl:,zuo2016tag-aware}, such as \citet{xu2017tag-aware}, which focuses on data where users and items have different attributes and uses autoencoders to learn user, item, and attribute representations. \citet{xu2017tag-aware} uses a cosine similarity-based objective function which is not tied to a metric used to evaluate recommendation performance, whereas \gls{rfs} is tied to recall as shown in \Cref{prop:maximizing-recall}.
+%, but this method requires collecting information about which items users decided not to consume.
+
+\paragraph{Recommendation via Classification.} The framing of recommendation as classification has been around for a long time~\citep{basu1998recommendation}, and several works build deep learning-based classifiers for recommendation \citep{covington2016deep,cheng2016wide,guo2017deepfm:,he2017neural}. \citet{covington2016deep} focus on scalable inclusion of user and item attributes for video recommendation, \citet{cheng2016wide} jointly train generalized linear models and deep neural networks for recommendation, while \citet{guo2017deepfm:} use factorization machines to learn high- and low-order interactions of features. Our work is complementary to these approaches: \gls{rfs} focuses on scalable inclusion of set-valued side information, and provides theoretical undergirding to these recommendation models. We connect such models that rely on classification to optimal recall in \Cref{prop:maximizing-recall}. And if a specific architecture developed in these works is a permutation-invariant recommendation model, we proved that \gls{rfs} is a universal function approximator (\Cref{prop:universal-approximation}). So if performance is measured by recall, an \gls{rfs} model can converge to an optimal recommender.
+%\citep{shi2014collaborative,gopalan2014content-based,wang2011collaborative,zhen2009tagicofi:,loepp2019interactive,bogers2018tag-based}
+
+\paragraph{Matrix Factorization with Side Information.} While matrix factorization methods perform well in recommending items that have consumption data in the training set~\citep{hu2008collaborative,liang2016factorization}, they cannot recommend items that have not been consumed in the training data. Including side information in matrix factorization enables recommendation of these items with no consumption data. \citet{shi2014collaborative} survey several matrix factorization methods that leverage  side information. \citet{gopalan2014content-based} develop a Bayesian matrix factorization model for recommending items based on side information in the form of words in documents, and we compare \gls{rfs} to this method in \Cref{sec:rfs-experiments}. \citet{wang2011collaborative} develop a regression model that uses a topic model to incorporate side information into recommendations. There are also several `tag-based' or `tag-aware' content-based matrix factorization models~\citep{zhen2009tagicofi:,loepp2019interactive,bogers2018tag-based}. Such content-based matrix factorization methods maximize the conditional log-likelihood of the data (or a bound on the log-likelihood); optimizing these objective functions may not optimize an evaluation metric. These methods are not scalable to large numbers of items as they require learning unique parameters for every item. Specifically, such content-based matrix factorization methods require learning a matrix that has a row for every item. For items with attributes, it is often infeasible to store this matrix in memory or exploit efficient coordinate ascent optimization schemes that require processing this entire matrix. \gls{rfs}, however, is designed to scale to tens of millions of items, as we demonstrate empirically in \Cref{sec:rfs-experiments}.
+
+\paragraph{Learning to Rank.} The learning to rank literature includes several recommendation models trained on objectives that approximate ranking-based evaluation metrics \citep{yu2018walkranker-fixed,liang2018top-n-rank:,rendle2009bpr:,song2018neural}, and some of these models include side information \citep{shi2012tfmap:,shi2012climf:,yuan2016optimizing,ying2016collaborative,cao2017embedding,okura2017embedding-based}. Such approaches can require data in addition to the user-item matrix, such as per-item parameters, or might use models whose output depends on the ordering of item attributes (making them infeasible for set-valued side information). In \Cref{sec:rfs-experiments}, we show that the ranking-based \gls{bpr} objective function~\citep{rendle2009bpr:,kula2015metadata} is in the \gls{rfs} class, so \Cref{prop:maximizing-recall} can help frame this related work. \citet{li2016a-relaxed} use an objective that is in the same class as \gls{bpr}, and other work bounds the \gls{bpr} objective~\citep{zhang2018discrete-deep}; these are also examples of \gls{rfs} models if a permutation-invariant architecture is specified and we study one such choice~\citep{kula2015metadata} in \Cref{sec:rfs-experiments}.
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \subsection{Recommendation via ranking}
+% We describe recommendation models trained on
+% such loss functions and extensions that include side information.
+% \paragraph{Learning to rank}
+% The literature on learning to rank includes models that optimize proxies of
+% evaluation metrics, such as mean average precision, mean reciprocal rank, or
+% discounted cumulative gain~\citep{yu2018walkranker:,liang2018top-n-rank:}. Forb
+% example, Bayesian personalized ranking models optimize a pairwise ranking
+% objective function \citep{rendle2009bpr:} that trains the model to rank items a
+% user consumed higher than items a user did not consume. This objective is a
+% heuristic motivated by an analogy to the receiver operating characteristic; a
+% model trained on this objective does not provably maximize this metric.
+% \citet{song2018neural} extend Bayesian personalized ranking using deep neural
+% networks, but do not model side information.
+% \paragraph{Learning to rank with side information}
+% Models that optimize proxies of ranking metrics that use side information
+% include \citet{shi2012tfmap:}, where a smoothed approximation of mean average
+% precision is used as a loss function. \citet{yuan2016optimizing} use a proxy of
+% a ranking loss to fit a polynomial that models predictions of item consumption
+% using item and side information features. \citet{ying2016collaborative} uses
+% denoising autoencoders to represent item information in a model trained with a
+% pairwise ranking loss. \citet{cao2017embedding} use a ranking loss to jointly
+% learn embeddings of items and attributes; they focus on the case where users
+% interact directly with both attributes and items with said attributes. All of
+% these models require learning unique parameters for every item, and do not scale
+% to large numbers of items. An example of a scalable method that uses the
+% Bayesian personalized ranking criterion is in \citet{okura2017embedding-based},
+% but this approach requires data with timestamps and negative item feedback.
+% \paragraph{Order-invariant models.} Deep learning architectures have been
+% developed for set-valued input. Such architectures are invariant to permutations
+% of set elements and can approximate any order-invariant function
+% \citep{zaheer2017deep,ravanbakhsh2017equivariance}. This work
+% addresses regression whereas we focus on recommendation, and develop a negative
+% sampling technique.
+% %
+% \citet{kumar2018representation} extend the order-invariant architectures to the
+% problem of a set-valued response; we focus on set-valued input for which data is
+% more readily available.
+% %
+% \citet{benson2018sequences} study the problem of predicting sets in a sequential
+% order. The task is to predict attributes of a new item given the number of
+% attributes. These attributes are modeled as coming from the attributes of the
+% items a user has recently consumed. In contrast, we do not focus on temporal
+% data and do not focus on repeated consumption of whole or partial copies of of
+% items' sets of attributes.
+% \paragraph{Ranking models.} Bayesian personalized ranking models optimize a
+% ranking criterion \citep{rendle2009bpr:} that trains the model to rank items a
+% user consumed higher than items a user did not consume. The criterion is
+% motivated by an analogy to the receiver operating characteristic, but they do
+% not prove that optimizing the criterion is equivalent to optimizing this metric.
+% In our work, we prove (in \Cref{prop:maximizing-recall}) that our approach
+% directly optimizes recall.
+% %
+% The Bayesian personalized ranking criterion has been extended to recommending
+% news articles \citep{okura2017embedding-based}, but this approach requires the
+% collection of observed (but not consumed) items. Our method applies to data
+% where this additional information is not required.
+% % c.f. https://data.princeton.edu/wws509/notes/c6s3
+% \paragraph{Discrete choice econometrics models.} Conditional logit models are
+% used in economics to study purchasing decisions \citep{mcfadden1973conditional},
+% and may include characteristics of items such as attributes.
+% %
+% \citet{ruiz2017shopper:} develop a sequential model for discrete choice of
+% consumer behavior. They focus on predicting additional attributes for an item
+% conditioned on its existing attributes, whereas our task concerns ranking items
+% given their attributes.
+% %
+% \citet{chiong2019random} use random projections to reduce the dimensionality of
+% the choice set in a discrete choice model (the number of items). However, it is
+% unclear whether their model scales: they study a dataset with a choice set of
+% size $3$k. The choice set in the diet data we study has tens of millions of
+% items.
+% %
+% \citet{overgoor2018choosing} develop a discrete choice model for graph-based
+% data where the task is predicting new edges. They use negative sampling as
+% training data for missing links in the graph, but do not address the case where
+% nodes have set-valued attributes (that is the case we focus on).
+% \paragraph{Deep learning-based recommender systems.} \citet{zhang2017deep}
+% reviews several deep learning models for recommending items to users. However,
+% these models are recommend items without leveraging side information as we do in
+% this work.
+% %
+% For example, \citet{nguyen2018npe:} develop a model for recommendation with
+% negative sampling, where the context items are other items a user has consumed.
+% (They not study the case where items are represented by sets of attributes.)
+% %
+% \citet{trofimov2018inferring} use a ranking loss with negative sampling for
+% learning embeddings to predict attributes of an item conditional on existing
+% attributes. Our task differs in that we aim to recommend items conditional on
+% their full set of attributes.
+% %
+% \citet{chen2017joint} study the task of ranking text for users by incorporating
+% different unsupervised representations of text. They do not address the task of
+% recommending items that are represented by sets of attributes as we focus on
+% here.
+% \paragraph{Negative sampling in recommender systems.}
+% \citet{chen2017on-sampling} analyze computational tradeoffs of different
+% negative sampling strategies for recommender systems. Their work is
+% complementary to ours, and could speed up the training of our model.

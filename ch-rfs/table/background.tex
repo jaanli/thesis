@@ -1,0 +1,57 @@
+% !TEX root = ../../main.tex
+\newcommand{\y}{\faCheck}
+% \newcommand{\y}{\checkmark}
+\newcommand{\myscale}{0.1}
+\newcolumntype{C}[1]{>{\centering}p{#1\linewidth}}
+\begin{table*}[htb!]
+  \begin{center}
+  % \resizebox{1.0\textwidth}{!}{%
+    \begin{tabular}{l
+                    C{\myscale}
+                    C{\myscale}
+                    C{\myscale}
+                    C{\myscale}
+                    C{\myscale}
+                    }
+      \toprule
+      Model & Attributes & Implicit & Scalable
+      & Invariant & Evaluation \tabularnewline
+      \midrule
+      \acrlong{rfs} & \y & \y & \y & \y & \y \tabularnewline
+      \acrshort{ctpf}, \citet{gopalan2014content-based}& \y & \y  &  & \y &\tabularnewline
+      StarSpace, \citet{wu2018starspace:} &\y & \y &\y &\y
+      &\tabularnewline
+      LightFM, \citet{kula2015metadata} & \y & \y & \y & \y
+      &\tabularnewline
+      \acrshort{bpr}, \citet{rendle2009bpr:}&  & \y &  & & \y\tabularnewline
+      \citet{wang2011collaborative} & \y & \y & & \y &
+      \tabularnewline
+     \citet{lian2018towards} & & & \y & & \tabularnewline
+      \citet{dong2017a-hybrid}& \y & & & \y &\tabularnewline
+      \citet{chen2017joint}&\y & &\y & &\tabularnewline
+      \citet{bansal2016ask-the-gru:}&\y & \y & & &\tabularnewline
+      \citet{xu2017tag-aware}& \y & & \y & \y &\tabularnewline
+      % \citet{shi2012tfmap:} &\y & \y & & \y & \y\tabularnewline
+      \citet{shi2012climf:} & & \y & & &\y \tabularnewline
+      \citet{chen2018a-collective} & \y & \y & & \y & \tabularnewline
+      \citet{liu2014recommending} & \y & & & \y & \y \tabularnewline
+      \citet{cao2017embedding} & \y & &  & & \y \tabularnewline
+      \citet{okura2017embedding-based} & \y & & \y & & \y \tabularnewline
+%      \citett{zhang2018discrete} & \y & \y & \y & \y &\tabularnewline
+      \bottomrule
+    \end{tabular}
+    % }
+    \caption[\textsc{rfs}-related work]{
+    \label{tab:background}
+    \textbf{\acrlong{rfs} recommends items using attributes, and is
+    trained to maximize the evaluation metric of recall.} Most
+    methods we highlight leverage item attributes (Attributes); some require
+    data in addition to the implicit feedback data of user-item interactions
+    (Implicit). Few methods are scalable, as most models that use
+    item side information require learning parameters for every item. Some
+    models are invariant to permutation of the attributes (Invariant), and some
+    enjoy a loss function that is connected to a recommender performance
+    metric (Evaluation).}
+    % \vspace{-0.5cm}
+  \end{center}
+\end{table*}

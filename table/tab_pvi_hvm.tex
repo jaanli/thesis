@@ -1,0 +1,16 @@
+% !TEX root = altosaar-2020-thesis.tex
+\begin{table}[tb]
+\centering
+\begin{tabular}{lS}
+\toprule
+Inference Method & \multicolumn{1}{c}{Free Energy}
+\\
+\midrule
+Variational Inference & -2.144 \\
+\gls{PVI}, Entropy Constraint &\bfseries -2.158 \\
+\bottomrule
+\end{tabular}
+% \vspace{1ex}
+\caption[\textsc{pvi} results for an \textsc{hvm} applied to the Ising model]{\textbf{\Acrlong{PVI} with the entropy proximity statistic improves the accuracy of an \gls{hvm} applied to an Ising model with 256 random variables.} Building on the tools developed in \Cref{ch:hvm} and \Cref{ch:pvi}, we report an importance sampling estimate of the free energy (lower is better; the exact value is $F\approx -2.198$ at inverse temperature $\beta=0.4$).}
+\label{tab:pvi-hvm}
+\end{table}

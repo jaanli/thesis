@@ -1,0 +1,59 @@
+% !TEX root = ../main.tex
+% \appendix
+\section{Appendix}
+\subsection{Empirical Study Hyperparameters}
+\label{sec:appendix-empirical}
+
+Experiments for \gls{rfs}, LightFM, and recurrent neural network models are run on a cluster with Tesla P100 GPUs using PyTorch; all other experiments are performed on a 20-core computer.
+
+\paragraph{Hyperparameters for Word Embedding Model and StarSpace.} For the word embedding model and StarSpace, we use the software packages released alongside the respective papers~\citep{bojanowski2017enriching,wu2018starspace:} with recommended hyperparameters, and grid search over embedding sizes of $\{128, 256, 512, 1024\}$ for both datasets.
+
+\paragraph{Hyperparameters for LightFM.} On both datasets, LightFM with the logistic objective reported in \citet{kula2015metadata} performs poorly and we omit these results. \citet{kula2015metadata} does not use the \gls{bpr} objective in the paper; nevertheless, we study LightFM with the \gls{bpr} objective (this variant is unpublished, yet implemented in the code released in \citep{kula2015metadata}) and use the same hyperparameters as \gls{rfs} for comparison.
+
+\subsection{Recommending Research Papers}
+\label{sec:hyper-arxiv}
+\paragraph{Hyperparameters for \acrshort{rfs}.} We test the stochastic gradient descent algorithm with and without momentum \citep{sutskever2013on-the-importance}. We use a linear learning rate decay that decays to zero in the maximum number of iterations, $200$k. We perform a grid search over learning rates of $\{1, 5, 10, 15, 25\}$ and momenta of $\{0.5, 0.9, 0.95, 0.99\}$. The minibatch size is set to $2^{16}$. We use a single negative sample per datapoint, sampled uniformly over the entire dataset; such corpus sampling is defined in \Cref{sec:rankfromsets}. As the number of items is small relative to the larger diet tracking data, the item intercept function is simply a scalar for every item, and the item embedding function learns item embeddings. To match the hyperparameters in \citet{gopalan2014content-based}, we set the dimensionality of user and item embeddings to $100$. Evaluation is performed every $20$k iterations.
+
+\paragraph{Hyperparameters for Recurrent Neural Network Models.} We implement the model in \citet{bansal2016ask-the-gru:} using PyTorch and match the hyperparameters where possible. We test \gls{gru} cells and \gls{lstm} cells with the objective function in \Cref{eq:objective}. The model has access to full sequence information, unlike \gls{rfs}, as abstracts of research papers have meaningful sequence information (marginalizing using \Cref{eq:rnn} would destroy information and decrease performance). The attribute embedding size is fixed to $100$ to match the other models and attribute embeddings are initialized to word embeddings pretrained on all 636k document abstracts as in \citet{bansal2016ask-the-gru:}, using the word embedding implementation in \citet{bojanowski2017enriching}. The first layer of the recurrent neural network is bidirectional and of hidden size $400$, the second layer is unidirectional and of hidden size $200$, and dropout is used with the same settings as in \citet{bansal2016ask-the-gru:}. Evaluation is performed every $20$k iterations. We grid search over learning rates of $\{10^{-1}, 10^{-2}, 10^{-3}, 10^{-4}\}$ with the Adam optimizer \citep{kingma2015adam:} and batch sizes of $\{64, 128, 256, 512, 1024, 4096, 8192\}$. As evaluation is much more expensive for sequence models, we randomly select a subset of $100$ users from the held-out set of 10k users. If validation performance does not improve, we reload the best parameters and optimizer states, and divide the learning rate by half. In both experiments, \gls{lstm} cells outperformed \gls{gru} cells.
+
+\subsection{Recommending Meals}
+\paragraph{Hyperparameters for \gls{rfs}.} The embedding size is set to $128$. For the neural network and residual models in \Cref{eqn:neural-network,eqn:residual} the number of hidden layers is two, and the number of hidden units is set to $256$ with rectifier nonlinearities. The item embeddings $g(x_m)$, and item intercepts $h(x_m)$, are computed as the mean of learned food embeddings and intercepts, respectively. We use the RMSProp optimizer in \citet{graves2013generating} and grid search over the learning rates $\{10^{-2}, 10^{-3}, 10^{-4}, 10^{-5}\}$. We use a batch size of $64$ and a single negative sample for every datapoint in a minibatch (batch sampling is defined in \Cref{sec:rankfromsets}). Evaluation is performed every $50$k iterations.
+
+\paragraph{Hyperparameters for Permutation-marginalized Recurrent Neural Networks.} We use the same settings as described in \Cref{sec:hyper-arxiv}, but the data in this case has no sequence information so we use \Cref{eq:rnn} to average predictions of the model in \citet{bansal2016ask-the-gru:} over permutations. Evaluation for sequence models is already prohibitive, so for every item in a minibatch we sample a single permutation of attributes to approximate the sum over permutations in \Cref{eq:rnn}. We use a single negative sample per datapoint (minibatch sampling), and set the embedding and hidden state sizes to $128$. We use the Adam optimizer~\citep{kingma2015adam:} and grid search over the same learning rates, learning rate decay, and batch sizes as in \Cref{sec:hyper-arxiv}, with evaluation every 1k iterations.
+
+\subsection{Generalization Simulation Study}
+\label{sec:simulation}
+% In this simulation, the regression function $f$ was the square kernel between
+% the user embedding $\theta_u$ and the mean of item attribute embeddings
+% ${\beta_j: j \in x^+_m}$. For a fair comparison, the regression functions in
+% \Cref{eqn:rankfromsets,eqn:neural-network,eqn:residual} were chosen to have the
+% same number of parameters. For data generated using the square kernel, the
+% residual and deep parameterizations outperformed the inner product
+% parameterization.
+\Cref{prop:universal-approximation} is a universal function approximation theorem in the regime of infinite data. With finite data and a finite number of parameters, the optimal parameterization of \gls{rfs} is dependent on the data-generating distribution. From \Cref{fig:meal-recall}, the inner product \gls{rfs} parameterization outperforms the neural network parameterization. We demonstrate a simulated dataset where this order is reversed, to motivate the exploration of novel architectures. Recall that observations of user-item interactions are generated by a Bernoulli distribution with logit function $f$. We describe a choice of logit function $f$ that leads to the residual and deep architectures in \Cref{eqn:residual,eqn:neural-network} outperforming the inner product architecture in \Cref{eqn:rankfromsets} in terms of predictive performance. We will release all code required to replicate this experiment.
+\begin{enumerate}
+  \item \textbf{For every user $u$:} Draw user embedding $\theta_u \sim \textrm{Normal}(0, \mbI)$.
+  \item \textbf{For every attribute $j$:} Draw attribute embedding $\beta_j \sim \textrm{Normal}(0, \mbI)$.
+  \item \textbf{For every item $m$:}
+    \begin{enumerate}
+    \item Draw item topics $\theta_m \sim \textrm{Dirichlet}(\alpha)$
+    \item Draw number of item attributes $M \sim \textrm{Poisson}(\lambda)$
+    \item Draw nonzero item attributes $x_m \sim \textrm{Multinomial}(M, \theta_m)$.
+    \end{enumerate}
+  \item \textbf{For every user, item:} $\yum \sim \textrm{Bernoulli}\left(\yum; \sigma(f(\theta_u, x_m)\right)$.
+\end{enumerate}
+The logit function $f$ is the square kernel:
+$$f(\theta_u, x_m) = \left(\theta_u^\top \frac{1}{|x_m|}\sum_{j \in x_m}
+  \beta_j\right)^2.$$
+The output of $f$ is standardized across users and centered at $7$ to achieve sparse user-item observations.
+
+For this simulation study, we set the Dirichlet parameter to be $\alpha=0.01$ and the Poisson rate to be $\lambda=20$. We generate data for $1$k users, $5$k item attributes, $30$k items, and hold out $100$ users for each of the validation and test sets. The embedding sizes are fixed to $100$, and for parameterizations with neural networks two hidden layers are used with rectifier nonlinearities. The hidden size of models with neural networks is chosen so the total number of parameters matches the number of parameters in the inner product model. We fix the momentum to $0.9$~\citep{sutskever2013on-the-importance} and grid search over stochastic gradient descent learning rates of ${10, 1, 0.1, 0.01}$ and over two learning rate decay schedules. The first linear learning rate decay goes to zero over $100$k iterations, while the second divides the learning rate by $10$ if the validation in-matrix recall does not improve (evaluation is performed every $500$ iterations). We run the grid search on one instance of data generated from this model. We regenerate data $30$ times and average results over these synthetic datasets, using the best performing hyperparameters for each model trained on the first instance.
+
+\input{ch-rfs/table/simulation}
+The results in \Cref{tab:simulation} demonstrate that the residual model outperforms both the deep and inner product architectures for data generated by the above generative process. This shows that the choice of architecture in \gls{rfs} is data-dependent and leads to considering when a \gls{rfs} recommendation model supports generalization. To ensure that the model does not overfit as new users or items are included in the training data, we need to compare the number of parameters to the number of datapoints. A model with parameters the size of the training data can overfit by memorizing the training data. For generalization to be possible, overfitting can be avoided if the number of parameters grows slower than the size of the data. The technical backing for this comes from asymptotic statistics and the concept of sieved likelihoods. Specifically, the maximum likelihood estimation procedure with the objective function in \Cref{eq:objective} can be replaced by maximization of a sieved likelihood function. The `sieve' refers to filtering information as the number of parameters (in this case, the number of parameters in user and item representations) grows with the number of observations. The sieved likelihood function enables the analysis of asymptotic behavior as the number of users grows $U\rightarrow \infty$ and the number of items grows $I\rightarrow \infty$. An example of a technique to grow the number of parameters in a way that supports generalization is given in Chapter 25 of \citet{vaart1998asymptotic}.
+
+\clearpage
+\subsection{Code}
+\label{sec:code}
+We give an example implementation of \acrlong{rfs} with the inner product regression function in \Cref{eqn:rankfromsets} in python with the PyTorch package. This implementation is easy to port to new applications and achieves state-of-the-art results in \Cref{sec:rfs-experiments}.
+\lstinputlisting[language=Python]{ch-rfs/code.py}

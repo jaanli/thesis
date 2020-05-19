@@ -1,0 +1,29 @@
+% !TEX root = ../main.tex
+\section{Permutation-invariant Recommender Models}
+\label{sec:models}
+\Cref{prop:universal-approximation} shows that \gls{rfs} can approximate permutation-invariant recommendation models. We describe several common recommendation models and show that they are permutation-invariant, before comparing their performance to \gls{rfs} in \Cref{sec:rfs-experiments}.
+
+\citet{gopalan2014content-based} develop a probabilistic matrix factorization model of user consumption data. \Gls{ctpf} models user preferences using a generative process,
+\input{ch-rfs/ctpf_generative_process}
+To show that \gls{ctpf} is permutation-invariant, consider the Poisson likelihood function over words $w_{dv}$. Conditional on the latent item representation $\theta_d$ and latent word representation $\beta_v$, every word in the document $w_{dv}$ is independent; the joint probability of words in a document factorizes:
+\begin{align}
+  p(w_{d} \mid \theta_d, \beta_v) &= \prod_{w_{dv} \in w_d} p(w_{dv} \mid \theta_d, \beta_v)\, .
+\end{align}
+\gls{ctpf} makes predictions using expectations under the posterior. The posterior is proportional to the the log joint of the model, and the attributes of items (words in documents) enter into the model only via the above product. The product of the probability of words in a document is invariant to a reordering of the words in the document, and therefore \gls{ctpf} is permutation-invariant.
+
+Word embedding models~\citep{mikolov2013distributed} can be used as recommendation models if the embeddings are learned using a modified context window. For an item with attributes $x_m$, let the context window for attribute ${j\in x_m}$ be the set of other attributes of the same item ${j' \in x_m: j'\neq j}$. To recommend items using this model of attributes $\beta_j$ for $j \in V$, item embeddings are computed as the average of their attribute embeddings. Users are represented as the average of the embeddings of the items they consume, and recommendation is performed using the cosine similarity of user and item embeddings. This is a permutation-invariant model, as the output of the model depends on the sum of attribute embeddings (summation is invariant to permutation).
+
+StarSpace is also an embedding model and represents users as a sum over a user's consumed items' attribute embeddings (there is no explicit user embedding). In contrast to the word embedding model, StarSpace is trained on a classification objective with negative samples drawn from the the set of items~\citep{wu2018starspace:}. As model predictions depend on sums of attributes, StarSpace is a permutation-invariant recommendation model.
+
+We next consider LightFM~\citep{kula2015metadata}, a permutation-invariant recommendation model. We show that if the \gls{bpr} objective~\citep{rendle2009bpr:} is used, LightFM is an instance of \acrshort{rfs}. \footnote{The LightFM paper~\citep{kula2015metadata} uses a logistic objective to which \Cref{prop:maximizing-recall} applies. LightFM with the \gls{bpr} objective is unpublished but implemented in code released by the author. For completeness, we studied LightFM with both objectives to ensure its performance is equivalent to \gls{rfs} when the \gls{bpr} objective is used.} Although the \gls{bpr} objective is designed for ranking, models trained with it can be used to construct classifiers. The \gls{bpr} objective is
+$${\log\sigma\left(f(u, x_m; \mbgamma) - f(u, x_k; \mbgamma)\right)}\, ,$$
+where $m$ corresponds to a positive label $\yum = 1$, $k$ corresponds to a negative label $\yuk = 0$, and $f$ is parameterized as in \gls{rfs}~\citep{kula2015metadata}. A ranking function $f$ optimizes the \gls{bpr} objective if~${f\rightarrow \infty}$ for the positive example and $f$ is constant for the negative example; or, if $f$ is constant for the positive example and $f\rightarrow -\infty$ for the negative example. In either case, a constant can be added to yield a perfect classifier from the ranking function $f$ (positive examples are ranked higher than negative examples in the optimal ranking, so there exists such a constant). That we can construct a classifier from the \gls{bpr} objective means that \Cref{prop:maximizing-recall} applies: permutation-invariant models such as LightFM, trained with the \gls{bpr} objective, are instances of the \gls{rfs} class of recommendation models.
+
+The regression function $f$ in \gls{rfs} can also be parameterized using a recurrent network, as in \citet{bansal2016ask-the-gru:}. Such a recommendation model can be made permutation-invariant if averaged over permutations of attributes fed to the network. Attributes are treated as a sequence and the marginalization is over these permutations,
+\begin{equation}
+p(\yum = 1 \mid x_m) =
+  \frac{1}{\lvert \pi(x_m) \rvert}\sum_{\pi \in \pi(x_m)}\sigma\left(\phi(\theta_u,\{\beta_{\pi(1)}, \ldots,
+  \beta_{\pi(J)}\})\right) \, .
+\label{eq:rnn}
+\end{equation}
+Here $\beta_j$ are attribute embeddings, $\pi(x_m)$ denotes the set of all permutations of the attributes $x_m$, and $\phi$ is the output of a recurrent neural network architecture~\citep{bansal2016ask-the-gru:} projected to a scalar.

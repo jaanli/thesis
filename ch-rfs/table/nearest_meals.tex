@@ -1,0 +1,45 @@
+% !TEX root = ../../main.tex
+\begin{table*}[htb!]
+\centering
+\resizebox{1.0\textwidth}{!}{%
+\begin{tabular}{p{80mm}|p{80mm}}
+  \toprule
+  Query Item & Nearest Item by Cosine Similarity \\
+  \midrule
+  Two scoops of Raisin Bran cereal, organic Moroccan green tea, almond milk,
+  light honey, tap water, large banana, large strawberries
+       &
+         Vita Bee bread, salted butter, fresh medium tomatoes, large fried whole
+         egg, small banana\\\hline
+  Iceberg lettuce, cantaloupe cubes, diced honeydew melon, cherry tomatoes, olives, dry-cooked unsalted
+  hulled sunflower seed kernels, chopped hard-boiled
+  egg, cucumbers, dried cranberries, fat-free ranch dressing
+       &
+         Green leaf lettuce, chopped sweet red bell peppers, crumbled feta cheese,
+         large hard-boiled egg,
+         chopped cucumber, oil-roasted salted sunflower seeds, sliced radishes, sliced strawberries, pitted Calamata olives, fat-free
+         balsamic vinegar\\\hline
+  Boston roast pork, mackerel, artichoke hearts, spinach, pimiento-stuffed
+  Manzanilla olives, carrots, mushrooms, peppercorn ranch dressing
+       &
+         Broiled top round steak, tomatoes, cucumber, baby yellow squash, zucchini, black olives, extra virgin olive oil\\\hline
+  Meatloaf with tomato sauce, chopped sweet red bell peppers, extra virgin olive oil, cooked asparagus spears, sweet potatoes, orange, cantaloupe cubes
+       &
+         Chicken breast, breadcrumbs, fresh tomatoes, shredded green leaf
+         lettuce, extra virgin olive oil, spinach, chopped yellow onion, sweet
+         large yellow bell peppers, whole mushrooms, chili peppers, vinaigrette
+  \\\hline
+  Ciabatta bun, cooked skinless chicken breast, fresh baby spinach, shredded iceberg lettuce,
+  shredded mozzarella cheese, ketchup, frozen yogurt bar
+             &
+               Small whole wheat submarine roll, broiled round roast
+               beef, roasted light turkey meat without skin, fresh medium
+               tomatoes, honey smoked ham, shredded iceberg lettuce, sliced mozzarella cheese\\
+         \bottomrule
+\end{tabular}
+}
+\caption[Qualitative evaluation of \textsc{rfs} for food recommendation]{\textbf{\acrlong{rfs} trained on food consumption data provides diverse meal recommendations.} \gls{rfs} with \Cref{eqn:residual} is fit to data from a diet tracking app; items are meals and attributes are the ingredients in the meal. Meals are represented the average of their attribute embeddings, and cosine similarity between meal representations is used to find the nearest neighbors of meals (user-level information cannot be shown as this is personal diet data). \gls{rfs} reveals eating patterns: for example, the second-last query meal is a mix of meat, vegetables, and fruit, and the nearest neighbor meal is a different meat with a side of salad; the last query meal is a sandwich, and its nearest neighbor is also a sandwich with different ingredients.}% This reveals
+% that \acrlong{rfs} uncovers latent patterns of consumption in the attribute
+% embeddings that can be leveraged to improve recommendations.
+\label{tab:nearest_meals}
+\end{table*}

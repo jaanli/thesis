@@ -1,0 +1,16 @@
+\begin{table}[!htbp]
+\centering
+\begin{tabular}{ccccccc}
+\toprule
+Method & Recall@20 & NDCG@20 & Recall@50 & NDCG@50 & Recall@50 & NDCG@100 \\
+\midrule
+Average & 0.0468 & 0.0670 & 0.0743 & 0.0861 & 0.0922 & 0.0963 \\
+Weighted average & 0.0458 & 0.0662 & 0.0739 & 0.0857 & 0.0914 & 0.0957 \\
+\bottomrule\\
+\end{tabular}
+\caption{Food embedding model in \Cref{sec:method_food_emb} with user
+embeddings
+computed two ways: by averaging a user's meal embeddings, or by weighting the
+meal embeddings by the number of times a user has consumed a food.}
+\label{tab:food_emb}
+\end{table}
