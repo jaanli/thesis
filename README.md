@@ -21,4 +21,4 @@ The Illustrator file for colorizing the backgrounds of drop caps is in `/design/
 
 ## Attribution
 
-This is based on @smsharma's excellent [https://github.com/smsharma/Thesis][https://github.com/smsharma/Thesis]!
+This is based on @smsharma's excellent [https://github.com/smsharma/Thesis](https://github.com/smsharma/Thesis)!
