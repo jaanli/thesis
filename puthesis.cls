@@ -113,8 +113,7 @@
 
     The code generated for this thesis is licensed under the MIT license (\url{https://opensource.org/licenses/MIT}):
   \begin{itemize}
-    \item This document: \url{https://github.com/altosaar/thesis
-}
+    \item This document: \url{https://github.com/altosaar/thesis}
     \item \Cref{ch:hvm}: \url{https://github.com/altosaar/hierarchical-variational-models-physics}
     \item \Cref{ch:rfs}: \url{https://github.com/altosaar/rankfromsets}
     \item \Cref{ch:pvi}: \url{https://github.com/altosaar/proximity_vi}
