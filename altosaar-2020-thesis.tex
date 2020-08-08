@@ -5,15 +5,15 @@
 %%%%%  Online mode  %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-\providecommand{\chooselayout}{\documentclass[11pt,lot,lof,twoside]{puthesis}}
-\providecommand{\modifyoutput}{}
+% \providecommand{\chooselayout}{\documentclass[11pt,lot,lof,twoside]{puthesis}}
+% \providecommand{\modifyoutput}{}
 
 % %%%%%%%%%%%%%%%%%%%%%%%%
 % %%%%%  Print Mode  %%%%%
 % %%%%%%%%%%%%%%%%%%%%%%%%
 
-% \providecommand{\chooselayout}{\documentclass[12pt,twoside,longbibliography,nofootinbib,preprintnumbers,singlespace]{puthesis}}
-% \providecommand{\modifyoutput}{\newcommand{\printmode}{}}
+\providecommand{\chooselayout}{\documentclass[12pt,twoside,longbibliography,nofootinbib,preprintnumbers,singlespace]{puthesis}}
+\providecommand{\modifyoutput}{\newcommand{\printmode}{}}
 
 \chooselayout
 \modifyoutput
@@ -97,12 +97,8 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Printed vs. online formatting
-\ifdefined\printmode
-
 % Printed copy
-\usepackage{url}
-
-\else
+% \usepackage{url}
 
 % Online copy
 \usepackage{hyperref}
@@ -110,14 +106,11 @@
 % cleveref must come after hyperref
 \usepackage[capitalize,nameinlink]{cleveref}
 \Crefname{prop}{Proposition}{Propositions}
-
 \hypersetup{colorlinks,bookmarksnumbered,
   linkcolor  = mylinkcolor!\myshade!black,
   citecolor  = mycitecolor!\myshade!black,
   urlcolor   = myurlcolor!\myshade!black,
 }
-
-\fi
 
 % Set PDF attributes
 \makeatletter
